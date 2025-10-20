@@ -11,7 +11,7 @@ import { PaymentStep } from "@/components/steps/PaymentStep";
 import { TermsDialog } from "@/components/TermsDialog";
 import { FormData } from "@/types/form";
 import { toast } from "sonner";
-import topoImage from "@/assets/topo.png";
+import topoImage from "@/assets/topo.webp";
 import { personalDataSchema, residentialAddressSchema, commercialAddressSchema, paymentSchema } from "@/lib/validations";
 const Index = () => {
   const [currentStep, setCurrentStep] = useState(1);
