@@ -50,7 +50,7 @@ export type Database = {
           rg: string
           sex: string
           uf: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           accept_image_usage?: boolean
@@ -87,7 +87,7 @@ export type Database = {
           rg: string
           sex: string
           uf: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           accept_image_usage?: boolean
@@ -124,7 +124,7 @@ export type Database = {
           rg?: string
           sex?: string
           uf?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }

@@ -1,5 +1,4 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from 'jsr:@supabase/supabase-js@2';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
@@ -60,26 +59,6 @@ const applicationSchema = z.object({
   acceptImageUsage: z.boolean().refine(val => val === true),
 });
 
-// Rate limiting: simple in-memory tracker (resets on function restart)
-const submissions = new Map<string, number[]>();
-const MAX_SUBMISSIONS_PER_HOUR = 3;
-
-function checkRateLimit(userId: string): boolean {
-  const now = Date.now();
-  const userSubmissions = submissions.get(userId) || [];
-  
-  // Filter submissions from last hour
-  const recentSubmissions = userSubmissions.filter(time => now - time < 3600000);
-  
-  if (recentSubmissions.length >= MAX_SUBMISSIONS_PER_HOUR) {
-    return false;
-  }
-  
-  recentSubmissions.push(now);
-  submissions.set(userId, recentSubmissions);
-  return true;
-}
-
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -88,45 +67,19 @@ Deno.serve(async (req) => {
   try {
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
-        },
-      }
+      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     );
-
-    // Verify authentication
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
-    
-    if (authError || !user) {
-      console.error('Authentication failed:', authError);
-      return new Response(
-        JSON.stringify({ error: 'Não autenticado' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Check rate limit
-    if (!checkRateLimit(user.id)) {
-      console.warn(`Rate limit exceeded for user ${user.id}`);
-      return new Response(
-        JSON.stringify({ error: 'Limite de envios atingido. Tente novamente mais tarde.' }),
-        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
 
     // Parse and validate request body
     const body = await req.json();
     const validatedData = applicationSchema.parse(body);
 
-    console.log(`Processing application for user ${user.id}`);
+    console.log('Processing anonymous application submission');
 
-    // Insert into database with user_id
+    // Insert into database (no user_id for anonymous submissions)
     const { data, error: dbError } = await supabaseClient
       .from('applications')
       .insert({
-        user_id: user.id,
         full_name: validatedData.fullName,
         birth_date: validatedData.birthDate,
         sex: validatedData.sex,
@@ -171,7 +124,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log(`Application ${data.id} created successfully for user ${user.id}`);
+    console.log(`Application ${data.id} created successfully`);
 
     // TODO: Send email via Resend
     // TODO: Send WhatsApp via Evolution API

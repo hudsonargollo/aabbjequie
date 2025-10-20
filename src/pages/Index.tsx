@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -20,32 +19,9 @@ import {
 } from "@/lib/validations";
 
 const Index = () => {
-  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 4;
-  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    // Check authentication
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        navigate("/auth");
-      } else {
-        setUser(session.user);
-      }
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!session) {
-        navigate("/auth");
-      } else {
-        setUser(session.user);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
   
   const [formData, setFormData] = useState<FormData>({
     fullName: "", birthDate: "", sex: "", civilStatus: "", cpf: "", rg: "", emissor: "", uf: "",
@@ -131,23 +107,9 @@ const Index = () => {
     }
   };
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/auth");
-  };
-
-  if (!user) {
-    return null; // Will redirect to auth
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
       <div className="w-full max-w-4xl mx-auto px-4 py-8">
-        <div className="flex justify-end mb-4">
-          <Button variant="outline" onClick={handleLogout} size="sm">
-            Sair
-          </Button>
-        </div>
         <img src={topoImage} alt="AABB Jequié - Janela Relâmpago" className="w-full rounded-lg shadow-lg mb-8" />
         
         <Card className="p-6 md:p-8 shadow-xl">
