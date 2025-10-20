@@ -28,22 +28,20 @@ export const personalDataSchema = z.object({
 export const residentialAddressSchema = z.object({
   residentialStreet: z.string().trim().min(3, "Rua muito curta").max(200),
   residentialNumber: z.string().trim().min(1, "Número obrigatório").max(10),
-  residentialNeighborhood: z.string().trim().min(2, "Bairro muito curto").max(100),
+  residentialNeighborhood: z.string().trim().min(1, "Selecione o bairro").max(100),
   residentialCep: z.string().regex(cepRegex, "CEP deve estar no formato XXXXX-XXX"),
   residentialCity: z.string().trim().min(2, "Cidade muito curta").max(100),
-  residentialWhatsapp: z.string().regex(phoneRegex, "WhatsApp inválido"),
-  residentialPhone: z.string().regex(phoneRegex, "Telefone inválido").optional().or(z.literal('')),
+  residentialWhatsapp: z.string().regex(phoneRegex, "Telefone/WhatsApp inválido"),
   email: z.string().trim().email("Email inválido").max(255, "Email muito longo"),
 });
 
 export const commercialAddressSchema = z.object({
   commercialStreet: z.string().trim().min(3, "Rua muito curta").max(200),
   commercialNumber: z.string().trim().min(1, "Número obrigatório").max(10),
-  commercialNeighborhood: z.string().trim().min(2, "Bairro muito curto").max(100),
+  commercialNeighborhood: z.string().trim().min(1, "Selecione o bairro").max(100),
   commercialCep: z.string().regex(cepRegex, "CEP deve estar no formato XXXXX-XXX"),
   commercialCity: z.string().trim().min(2, "Cidade muito curta").max(100),
-  commercialWhatsapp: z.string().regex(phoneRegex, "WhatsApp inválido").optional().or(z.literal('')),
-  commercialPhone: z.string().regex(phoneRegex, "Telefone inválido").optional().or(z.literal('')),
+  commercialWhatsapp: z.string().regex(phoneRegex, "Telefone/WhatsApp inválido").optional().or(z.literal('')),
 });
 
 export const paymentSchema = z.object({

@@ -29,7 +29,6 @@ export interface FormData {
   residentialCep: string;
   residentialCity: string;
   residentialWhatsapp: string;
-  residentialPhone: string;
   email: string;
   
   // Endereço Comercial
@@ -39,7 +38,6 @@ export interface FormData {
   commercialCep: string;
   commercialCity: string;
   commercialWhatsapp: string;
-  commercialPhone: string;
   
   // Pagamento (no sensitive data stored)
   paymentMethod: string;

@@ -27,9 +27,9 @@ const Index = () => {
   const [formData, setFormData] = useState<FormData>({
     fullName: "", birthDate: "", sex: "", civilStatus: "", cpf: "", rg: "", emissor: "", uf: "",
     residentialStreet: "", residentialNumber: "", residentialNeighborhood: "", residentialCep: "",
-    residentialCity: "", residentialWhatsapp: "", residentialPhone: "", email: "",
+    residentialCity: "Jequié", residentialWhatsapp: "", email: "",
     commercialStreet: "", commercialNumber: "", commercialNeighborhood: "", commercialCep: "",
-    commercialCity: "", commercialWhatsapp: "", commercialPhone: "",
+    commercialCity: "Jequié", commercialWhatsapp: "",
     paymentMethod: "", monthlyPaymentMethod: "", dueDate: "",
     paymentToken: "", paymentProcessor: "", lastFourDigits: "",
     dependents: [], acceptStatute: false, acceptImageUsage: false, hasCriminalRecord: false
@@ -88,9 +88,9 @@ const Index = () => {
       setFormData({
         fullName: "", birthDate: "", sex: "", civilStatus: "", cpf: "", rg: "", emissor: "", uf: "",
         residentialStreet: "", residentialNumber: "", residentialNeighborhood: "", residentialCep: "",
-        residentialCity: "", residentialWhatsapp: "", residentialPhone: "", email: "",
+        residentialCity: "Jequié", residentialWhatsapp: "", email: "",
         commercialStreet: "", commercialNumber: "", commercialNeighborhood: "", commercialCep: "",
-        commercialCity: "", commercialWhatsapp: "", commercialPhone: "",
+        commercialCity: "Jequié", commercialWhatsapp: "",
         paymentMethod: "", monthlyPaymentMethod: "", dueDate: "",
         paymentToken: "", paymentProcessor: "", lastFourDigits: "",
         dependents: [], acceptStatute: false, acceptImageUsage: false, hasCriminalRecord: false

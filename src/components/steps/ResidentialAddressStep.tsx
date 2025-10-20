@@ -1,6 +1,8 @@
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { FormData } from "@/types/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { formatCEP, jequieNeighborhoods } from "@/lib/utils";
 
 interface ResidentialAddressStepProps {
   data: FormData;
@@ -8,6 +10,11 @@ interface ResidentialAddressStepProps {
 }
 
 export const ResidentialAddressStep = ({ data, onChange }: ResidentialAddressStepProps) => {
+  const handleCEPChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCEP(e.target.value);
+    onChange('residentialCep', formatted);
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
@@ -43,13 +50,21 @@ export const ResidentialAddressStep = ({ data, onChange }: ResidentialAddressSte
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="residentialNeighborhood">Bairro *</Label>
-            <Input
-              id="residentialNeighborhood"
+            <Select
               value={data.residentialNeighborhood}
-              onChange={(e) => onChange("residentialNeighborhood", e.target.value)}
-              placeholder="Bairro"
-              className="mt-1"
-            />
+              onValueChange={(value) => onChange('residentialNeighborhood', value)}
+            >
+              <SelectTrigger className="mt-1">
+                <SelectValue placeholder="Selecione o bairro" />
+              </SelectTrigger>
+              <SelectContent>
+                {jequieNeighborhoods.map((neighborhood) => (
+                  <SelectItem key={neighborhood} value={neighborhood}>
+                    {neighborhood}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div>
@@ -57,7 +72,7 @@ export const ResidentialAddressStep = ({ data, onChange }: ResidentialAddressSte
             <Input
               id="residentialCep"
               value={data.residentialCep}
-              onChange={(e) => onChange("residentialCep", e.target.value)}
+              onChange={handleCEPChange}
               placeholder="00000-000"
               className="mt-1"
             />
@@ -75,28 +90,27 @@ export const ResidentialAddressStep = ({ data, onChange }: ResidentialAddressSte
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="residentialWhatsapp">Celular WhatsApp *</Label>
-            <Input
-              id="residentialWhatsapp"
-              value={data.residentialWhatsapp}
-              onChange={(e) => onChange("residentialWhatsapp", e.target.value)}
-              placeholder="(00) 00000-0000"
-              className="mt-1"
-            />
-          </div>
+        <div>
+          <Label htmlFor="residentialWhatsapp">Telefone/WhatsApp *</Label>
+          <Input
+            id="residentialWhatsapp"
+            value={data.residentialWhatsapp}
+            onChange={(e) => onChange("residentialWhatsapp", e.target.value)}
+            placeholder="(00) 00000-0000"
+            className="mt-1"
+          />
+        </div>
 
-          <div>
-            <Label htmlFor="residentialPhone">Celular</Label>
-            <Input
-              id="residentialPhone"
-              value={data.residentialPhone}
-              onChange={(e) => onChange("residentialPhone", e.target.value)}
-              placeholder="(00) 00000-0000"
-              className="mt-1"
-            />
-          </div>
+        <div>
+          <Label htmlFor="email">Email *</Label>
+          <Input
+            id="email"
+            type="email"
+            value={data.email}
+            onChange={(e) => onChange("email", e.target.value)}
+            placeholder="seu@email.com"
+            className="mt-1"
+          />
         </div>
       </div>
     </div>
