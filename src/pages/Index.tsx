@@ -178,9 +178,9 @@ const Index = () => {
               {currentStep > 1 && <Button variant="outline" onClick={handleBack} className="flex-1 h-12 text-base font-bold border-2 hover:bg-muted">
                   ← Voltar
                 </Button>}
-              {currentStep < totalSteps ? <Button onClick={handleNext} className="flex-1 h-12 text-base font-bold bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-300">
+              {currentStep < totalSteps ? <Button onClick={handleNext} className="flex-1 h-14 text-base font-bold uppercase bg-primary text-primary-foreground border-2 border-primary-foreground/20 hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300">
                   Próximo →
-                </Button> : <Button onClick={handleSubmit} className="flex-1 h-12 text-base font-bold bg-gradient-to-r from-accent to-secondary hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-300" disabled={loading || formData.hasCriminalRecord}>
+                </Button> : <Button onClick={handleSubmit} className="flex-1 h-14 text-base font-bold uppercase bg-accent text-accent-foreground border-2 border-accent-foreground/20 hover:bg-accent/90 shadow-lg hover:shadow-xl transition-all duration-300" disabled={loading || formData.hasCriminalRecord}>
                   {loading ? "Enviando..." : "✓ Enviar Inscrição"}
                 </Button>}
             </div>
