@@ -34,6 +34,7 @@ export type Database = {
           email: string
           emissor: string
           full_name: string
+          has_criminal_record: boolean
           id: string
           last_four_digits: string | null
           monthly_payment_method: string
@@ -71,6 +72,7 @@ export type Database = {
           email: string
           emissor: string
           full_name: string
+          has_criminal_record?: boolean
           id?: string
           last_four_digits?: string | null
           monthly_payment_method: string
@@ -108,6 +110,7 @@ export type Database = {
           email?: string
           emissor?: string
           full_name?: string
+          has_criminal_record?: boolean
           id?: string
           last_four_digits?: string | null
           monthly_payment_method?: string
