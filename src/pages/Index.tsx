@@ -114,22 +114,24 @@ const Index = () => {
       
       <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
         <div className="w-full max-w-4xl mx-auto px-4 py-8 space-y-8">
-          {/* Hero Section */}
-          <div className="space-y-4 animate-fade-in">
-            <img 
-              src={topoImage} 
-              alt="AABB Jequié - Janela Relâmpago" 
-              className="w-full rounded-2xl shadow-2xl"
-            />
-            <div className="text-center">
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-                Inscrição de Sócio
-              </h1>
-              <p className="text-muted-foreground">
-                Preencha os dados abaixo para se tornar um sócio AABB
-              </p>
+          {/* Hero Section - Only show on step 1 */}
+          {currentStep === 1 && (
+            <div className="space-y-4 animate-fade-in">
+              <img 
+                src={topoImage} 
+                alt="AABB Jequié - Janela Relâmpago" 
+                className="w-full rounded-2xl shadow-2xl"
+              />
+              <div className="text-center">
+                <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+                  Inscrição de Sócio
+                </h1>
+                <p className="text-muted-foreground">
+                  Preencha os dados abaixo para se tornar um sócio AABB
+                </p>
+              </div>
             </div>
-          </div>
+          )}
           
           {/* Form Card */}
           <Card className="p-6 md:p-10 shadow-2xl border-2 animate-scale-in">
