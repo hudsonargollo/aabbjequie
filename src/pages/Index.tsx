@@ -32,7 +32,7 @@ const Index = () => {
     commercialCity: "", commercialWhatsapp: "", commercialPhone: "",
     paymentMethod: "", monthlyPaymentMethod: "", dueDate: "",
     paymentToken: "", paymentProcessor: "", lastFourDigits: "",
-    dependents: [], acceptStatute: false, acceptImageUsage: false
+    dependents: [], acceptStatute: false, acceptImageUsage: false, hasCriminalRecord: false
   });
 
   const handleChange = (field: keyof FormData, value: any) => {
@@ -93,7 +93,7 @@ const Index = () => {
         commercialCity: "", commercialWhatsapp: "", commercialPhone: "",
         paymentMethod: "", monthlyPaymentMethod: "", dueDate: "",
         paymentToken: "", paymentProcessor: "", lastFourDigits: "",
-        dependents: [], acceptStatute: false, acceptImageUsage: false
+        dependents: [], acceptStatute: false, acceptImageUsage: false, hasCriminalRecord: false
       });
       setCurrentStep(1);
     } catch (error: any) {
@@ -164,7 +164,7 @@ const Index = () => {
                 <Button 
                   onClick={handleSubmit} 
                   className="flex-1 h-12 text-base font-bold bg-gradient-to-r from-accent to-secondary hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-300"
-                  disabled={loading}
+                  disabled={loading || formData.hasCriminalRecord}
                 >
                   {loading ? "Enviando..." : "✓ Enviar Inscrição"}
                 </Button>

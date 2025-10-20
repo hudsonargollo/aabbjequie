@@ -55,4 +55,7 @@ export interface FormData {
   // Termos
   acceptStatute: boolean;
   acceptImageUsage: boolean;
+  
+  // Antecedentes
+  hasCriminalRecord: boolean;
 }
