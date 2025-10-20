@@ -60,8 +60,6 @@ function generateApplicationHTML(data: any): string {
         <div class="field"><strong>Estado Civil:</strong> ${data.civil_status}</div>
         <div class="field"><strong>CPF:</strong> ${data.cpf}</div>
         <div class="field"><strong>RG:</strong> ${data.rg}</div>
-        <div class="field"><strong>Órgão Emissor:</strong> ${data.emissor}</div>
-        <div class="field"><strong>UF:</strong> ${data.uf}</div>
         <div class="field"><strong>E-mail:</strong> ${data.email}</div>
       </div>
 
@@ -147,8 +145,7 @@ const applicationSchema = z.object({
   civilStatus: z.string().min(1),
   cpf: z.string().regex(cpfRegex),
   rg: z.string().trim().min(5).max(20),
-  emissor: z.string().trim().min(2).max(20),
-  uf: z.string().length(2),
+  email: z.string().email().max(255),
   residentialStreet: z.string().trim().min(3).max(200),
   residentialNumber: z.string().trim().min(1).max(10),
   residentialNeighborhood: z.string().trim().min(2).max(100),
@@ -156,7 +153,6 @@ const applicationSchema = z.object({
   residentialCity: z.string().trim().min(2).max(100),
   residentialWhatsapp: z.string().regex(phoneRegex),
   residentialPhone: z.string().regex(phoneRegex).optional(),
-  email: z.string().email().max(255),
   commercialStreet: z.string().trim().min(3).max(200),
   commercialNumber: z.string().trim().min(1).max(10),
   commercialNeighborhood: z.string().trim().min(2).max(100),
@@ -217,8 +213,6 @@ Deno.serve(async (req) => {
         civil_status: validatedData.civilStatus,
         cpf: validatedData.cpf,
         rg: validatedData.rg,
-        emissor: validatedData.emissor,
-        uf: validatedData.uf,
         residential_street: validatedData.residentialStreet,
         residential_number: validatedData.residentialNumber,
         residential_neighborhood: validatedData.residentialNeighborhood,
