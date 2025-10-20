@@ -1,6 +1,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { Resend } from "https://esm.sh/resend@2.0.0";
+import { jsPDF } from "https://esm.sh/jspdf@2.5.1";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -289,7 +290,96 @@ Deno.serve(async (req) => {
       console.error('Error sending user email:', emailError);
     }
 
-    // Send email to admin
+    // Generate PDF receipt
+    const pdf = new jsPDF();
+    const pageWidth = pdf.internal.pageSize.width;
+    let yPos = 20;
+
+    // Header
+    pdf.setFontSize(16);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('RECIBO DE INSCRIÇÃO', pageWidth / 2, yPos, { align: 'center' });
+    yPos += 10;
+    pdf.setFontSize(14);
+    pdf.text('AABB Jequié', pageWidth / 2, yPos, { align: 'center' });
+    yPos += 15;
+
+    // Personal Data
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('DADOS PESSOAIS', 20, yPos);
+    yPos += 7;
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(10);
+    pdf.text(`Nome: ${validatedData.fullName}`, 20, yPos); yPos += 6;
+    pdf.text(`CPF: ${validatedData.cpf}`, 20, yPos); yPos += 6;
+    pdf.text(`RG: ${validatedData.rg}`, 20, yPos); yPos += 6;
+    pdf.text(`Data de Nascimento: ${validatedData.birthDate}`, 20, yPos); yPos += 6;
+    pdf.text(`Sexo: ${validatedData.sex === 'M' ? 'Masculino' : 'Feminino'}`, 20, yPos); yPos += 6;
+    pdf.text(`Estado Civil: ${validatedData.civilStatus}`, 20, yPos); yPos += 10;
+
+    // Residential Address
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('ENDEREÇO RESIDENCIAL', 20, yPos);
+    yPos += 7;
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(10);
+    pdf.text(`${validatedData.residentialStreet}, ${validatedData.residentialNumber}`, 20, yPos); yPos += 6;
+    pdf.text(`${validatedData.residentialNeighborhood} - ${validatedData.residentialCity}`, 20, yPos); yPos += 6;
+    pdf.text(`CEP: ${validatedData.residentialCep}`, 20, yPos); yPos += 6;
+    pdf.text(`WhatsApp: ${validatedData.residentialWhatsapp}`, 20, yPos); yPos += 10;
+
+    // Commercial Address
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('ENDEREÇO COMERCIAL', 20, yPos);
+    yPos += 7;
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(10);
+    pdf.text(`${validatedData.commercialStreet}, ${validatedData.commercialNumber}`, 20, yPos); yPos += 6;
+    pdf.text(`${validatedData.commercialNeighborhood} - ${validatedData.commercialCity}`, 20, yPos); yPos += 6;
+    pdf.text(`CEP: ${validatedData.commercialCep}`, 20, yPos); yPos += 10;
+
+    // Payment Info
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('PAGAMENTO', 20, yPos);
+    yPos += 7;
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(10);
+    pdf.text(`Método de Pagamento da Taxa: ${validatedData.paymentMethod}`, 20, yPos); yPos += 6;
+    pdf.text(`Método Mensal: ${validatedData.monthlyPaymentMethod}`, 20, yPos); yPos += 6;
+    pdf.text(`Dia de Vencimento: ${validatedData.dueDate}`, 20, yPos); yPos += 10;
+
+    // Dependents
+    if (validatedData.dependents && validatedData.dependents.length > 0) {
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('DEPENDENTES', 20, yPos);
+      yPos += 7;
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(10);
+      
+      validatedData.dependents.forEach((dep: any, index: number) => {
+        if (yPos > 250) {
+          pdf.addPage();
+          yPos = 20;
+        }
+        pdf.text(`${index + 1}. ${dep.name} - CPF: ${dep.cpf}`, 20, yPos);
+        yPos += 6;
+      });
+      yPos += 5;
+    }
+
+    // Footer
+    yPos += 10;
+    pdf.setFontSize(9);
+    pdf.text(`Data da Inscrição: ${new Date().toLocaleDateString('pt-BR')}`, 20, yPos);
+    
+    const pdfBase64 = pdf.output('datauristring').split(',')[1];
+
+    // Send email to admin with PDF attachment
     try {
       await resend.emails.send({
         from: "AABB Jequié <onboarding@resend.dev>",
@@ -305,13 +395,17 @@ Deno.serve(async (req) => {
               <p><strong>WhatsApp:</strong> ${validatedData.residentialWhatsapp}</p>
               <p><strong>Data:</strong> ${new Date().toLocaleString('pt-BR')}</p>
             </div>
-            <hr>
-            <h2>Detalhes Completos:</h2>
-            ${applicationHTML}
+            <p>O recibo completo está em anexo.</p>
           </div>
         `,
+        attachments: [
+          {
+            filename: `recibo-${validatedData.cpf.replace(/\D/g, '')}.pdf`,
+            content: pdfBase64,
+          },
+        ],
       });
-      console.log('Admin email sent successfully');
+      console.log('Admin email sent successfully with PDF attachment');
     } catch (emailError) {
       console.error('Error sending admin email:', emailError);
     }
