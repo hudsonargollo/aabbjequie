@@ -1,7 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { Resend } from "https://esm.sh/resend@2.0.0";
-import PDFDocument from "https://esm.sh/pdfkit@0.13.0";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -10,121 +9,116 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-function generateApplicationPDF(data: any): Promise<Uint8Array> {
-  return new Promise((resolve, reject) => {
-    const doc = new PDFDocument({ margin: 50 });
-    const chunks: Uint8Array[] = [];
+function generateApplicationHTML(data: any): string {
+  const dependentsHTML = data.dependents && data.dependents.length > 0 
+    ? `
+      <h3 style="color: #1e40af; margin-top: 20px;">DEPENDENTES</h3>
+      ${data.dependents.map((dep: any, index: number) => `
+        <div style="margin: 10px 0; padding: 10px; background: #f9fafb; border-left: 3px solid #1e40af;">
+          <strong>Dependente ${index + 1}:</strong><br>
+          Nome: ${dep.name}<br>
+          CPF: ${dep.cpf}<br>
+          RG: ${dep.rg}<br>
+          Parentesco: ${dep.kinship}
+        </div>
+      `).join('')}
+    `
+    : '';
 
-    doc.on('data', (chunk: Uint8Array) => chunks.push(chunk));
-    doc.on('end', () => {
-      const result = new Uint8Array(chunks.reduce((acc, chunk) => acc + chunk.length, 0));
-      let offset = 0;
-      for (const chunk of chunks) {
-        result.set(chunk, offset);
-        offset += chunk.length;
-      }
-      resolve(result);
-    });
-    doc.on('error', reject);
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1, h2, h3 { color: #1e40af; }
+        .header { text-align: center; border-bottom: 3px solid #1e40af; padding-bottom: 20px; margin-bottom: 30px; }
+        .section { margin: 20px 0; page-break-inside: avoid; }
+        .field { margin: 8px 0; }
+        .signature-section { margin-top: 60px; page-break-before: always; }
+        .signature-line { border-top: 2px solid #000; width: 300px; margin: 80px 20px 10px; display: inline-block; }
+        .terms { margin: 30px 0; padding: 15px; background: #f9fafb; border-left: 4px solid #1e40af; }
+        @media print {
+          body { margin: 0; }
+          .page-break { page-break-after: always; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <h1>FICHA DE INSCRIÇÃO</h1>
+        <h2>AABB Jequié</h2>
+      </div>
 
-    // Header
-    doc.fontSize(18).font('Helvetica-Bold').text('FICHA DE INSCRIÇÃO', { align: 'center' });
-    doc.fontSize(16).text('AABB Jequié', { align: 'center' });
-    doc.moveDown(2);
+      <div class="section">
+        <h3>DADOS PESSOAIS</h3>
+        <div class="field"><strong>Nome Completo:</strong> ${data.full_name}</div>
+        <div class="field"><strong>Data de Nascimento:</strong> ${data.birth_date}</div>
+        <div class="field"><strong>Sexo:</strong> ${data.sex === 'M' ? 'Masculino' : 'Feminino'}</div>
+        <div class="field"><strong>Estado Civil:</strong> ${data.civil_status}</div>
+        <div class="field"><strong>CPF:</strong> ${data.cpf}</div>
+        <div class="field"><strong>RG:</strong> ${data.rg}</div>
+        <div class="field"><strong>Órgão Emissor:</strong> ${data.emissor}</div>
+        <div class="field"><strong>UF:</strong> ${data.uf}</div>
+        <div class="field"><strong>E-mail:</strong> ${data.email}</div>
+      </div>
 
-    // Dados Pessoais
-    doc.fontSize(12).font('Helvetica-Bold').text('DADOS PESSOAIS');
-    doc.fontSize(10).font('Helvetica');
-    doc.text(`Nome Completo: ${data.full_name}`);
-    doc.text(`Data de Nascimento: ${data.birth_date}`);
-    doc.text(`Sexo: ${data.sex === 'M' ? 'Masculino' : 'Feminino'}`);
-    doc.text(`Estado Civil: ${data.civil_status}`);
-    doc.text(`CPF: ${data.cpf}`);
-    doc.text(`RG: ${data.rg}`);
-    doc.text(`Órgão Emissor: ${data.emissor}`);
-    doc.text(`UF: ${data.uf}`);
-    doc.text(`E-mail: ${data.email}`);
-    doc.moveDown();
+      <div class="section">
+        <h3>ENDEREÇO RESIDENCIAL</h3>
+        <div class="field"><strong>Rua/Avenida:</strong> ${data.residential_street}</div>
+        <div class="field"><strong>Número:</strong> ${data.residential_number}</div>
+        <div class="field"><strong>Bairro:</strong> ${data.residential_neighborhood}</div>
+        <div class="field"><strong>CEP:</strong> ${data.residential_cep}</div>
+        <div class="field"><strong>Cidade:</strong> ${data.residential_city}</div>
+        <div class="field"><strong>WhatsApp:</strong> ${data.residential_whatsapp}</div>
+      </div>
 
-    // Endereço Residencial
-    doc.fontSize(12).font('Helvetica-Bold').text('ENDEREÇO RESIDENCIAL');
-    doc.fontSize(10).font('Helvetica');
-    doc.text(`Rua/Avenida: ${data.residential_street}`);
-    doc.text(`Número: ${data.residential_number}`);
-    doc.text(`Bairro: ${data.residential_neighborhood}`);
-    doc.text(`CEP: ${data.residential_cep}`);
-    doc.text(`Cidade: ${data.residential_city}`);
-    doc.text(`WhatsApp: ${data.residential_whatsapp}`);
-    doc.moveDown();
+      <div class="section">
+        <h3>ENDEREÇO COMERCIAL</h3>
+        <div class="field"><strong>Rua/Avenida:</strong> ${data.commercial_street}</div>
+        <div class="field"><strong>Número:</strong> ${data.commercial_number}</div>
+        <div class="field"><strong>Bairro:</strong> ${data.commercial_neighborhood}</div>
+        <div class="field"><strong>CEP:</strong> ${data.commercial_cep}</div>
+        <div class="field"><strong>Cidade:</strong> ${data.commercial_city}</div>
+        ${data.commercial_whatsapp ? `<div class="field"><strong>WhatsApp:</strong> ${data.commercial_whatsapp}</div>` : ''}
+      </div>
 
-    // Endereço Comercial
-    doc.fontSize(12).font('Helvetica-Bold').text('ENDEREÇO COMERCIAL');
-    doc.fontSize(10).font('Helvetica');
-    doc.text(`Rua/Avenida: ${data.commercial_street}`);
-    doc.text(`Número: ${data.commercial_number}`);
-    doc.text(`Bairro: ${data.commercial_neighborhood}`);
-    doc.text(`CEP: ${data.commercial_cep}`);
-    doc.text(`Cidade: ${data.commercial_city}`);
-    if (data.commercial_whatsapp) {
-      doc.text(`WhatsApp: ${data.commercial_whatsapp}`);
-    }
-    doc.moveDown();
+      <div class="section">
+        <h3>FORMA DE PAGAMENTO</h3>
+        <div class="field"><strong>Método de Pagamento da Taxa:</strong> ${data.payment_method}</div>
+        <div class="field"><strong>Método de Pagamento Mensal:</strong> ${data.monthly_payment_method}</div>
+        <div class="field"><strong>Dia de Vencimento:</strong> ${data.due_date}</div>
+      </div>
 
-    // Forma de Pagamento
-    doc.fontSize(12).font('Helvetica-Bold').text('FORMA DE PAGAMENTO');
-    doc.fontSize(10).font('Helvetica');
-    doc.text(`Método de Pagamento da Taxa: ${data.payment_method}`);
-    doc.text(`Método de Pagamento Mensal: ${data.monthly_payment_method}`);
-    doc.text(`Dia de Vencimento: ${data.due_date}`);
-    doc.moveDown();
+      ${dependentsHTML}
 
-    // Dependentes
-    if (data.dependents && data.dependents.length > 0) {
-      doc.fontSize(12).font('Helvetica-Bold').text('DEPENDENTES');
-      doc.fontSize(10).font('Helvetica');
-      data.dependents.forEach((dep: any, index: number) => {
-        doc.text(`\nDependente ${index + 1}:`);
-        doc.text(`Nome: ${dep.name}`);
-        doc.text(`CPF: ${dep.cpf}`);
-        doc.text(`RG: ${dep.rg}`);
-        doc.text(`Parentesco: ${dep.kinship}`);
-      });
-      doc.moveDown();
-    }
+      <div class="page-break"></div>
 
-    // New page for terms and signatures
-    doc.addPage();
-    doc.moveDown(2);
+      <div class="signature-section">
+        <div class="terms">
+          <p><strong>Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/REGIMENTO).</strong></p>
+          <p><strong>Autorizo o uso de minha imagem e de meus dependentes em fotos e filmagens com fins não comerciais nas publicações realizadas em eventos produzidos pela Associação em suas dependências, sejam eles culturais/esportivos.</strong></p>
+        </div>
 
-    // Terms
-    doc.fontSize(10).font('Helvetica');
-    doc.text('Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/REGIMENTO).', {
-      width: 500,
-      align: 'justify'
-    });
-    doc.moveDown();
-    doc.text('Autorizo o uso de minha imagem e de meus dependentes em fotos e filmagens com fins não comerciais nas publicações realizadas em eventos produzidos pela Associação em suas dependências, sejam eles culturais/esportivos.', {
-      width: 500,
-      align: 'justify'
-    });
-    doc.moveDown(3);
+        <div style="margin-top: 80px;">
+          <div style="display: inline-block; width: 45%; text-align: center;">
+            <div class="signature-line"></div>
+            <div><strong>Associado</strong></div>
+          </div>
+          <div style="display: inline-block; width: 45%; text-align: center; margin-left: 5%;">
+            <div class="signature-line"></div>
+            <div><strong>Associação Atlética Banco do Brasil</strong></div>
+          </div>
+        </div>
 
-    // Signature lines
-    const signatureY = doc.y + 50;
-    doc.moveTo(50, signatureY).lineTo(250, signatureY).stroke();
-    doc.moveTo(350, signatureY).lineTo(550, signatureY).stroke();
-    
-    doc.fontSize(10).text('Associado', 50, signatureY + 10);
-    doc.text('Associação Atlética Banco do Brasil', 350, signatureY + 10);
-
-    // Footer
-    doc.fontSize(8).text(`Data da Inscrição: ${new Date().toLocaleDateString('pt-BR')}`, 50, 750, {
-      align: 'center',
-      width: 500
-    });
-
-    doc.end();
-  });
+        <div style="text-align: center; margin-top: 60px; color: #666; font-size: 12px;">
+          Data da Inscrição: ${new Date().toLocaleDateString('pt-BR')}
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
 }
 
 // Validation schemas
@@ -263,9 +257,8 @@ Deno.serve(async (req) => {
 
     console.log(`Application ${data.id} created successfully`);
 
-    // Generate PDF
-    const pdfBuffer = await generateApplicationPDF(data);
-    const pdfBase64 = btoa(String.fromCharCode(...pdfBuffer));
+    // Generate HTML for email
+    const applicationHTML = generateApplicationHTML(data);
     
     // Send email to user
     try {
@@ -274,25 +267,22 @@ Deno.serve(async (req) => {
         to: [validatedData.email],
         subject: "Confirmação de Inscrição - AABB Jequié",
         html: `
-          <h1>Inscrição Recebida com Sucesso!</h1>
-          <p>Olá ${validatedData.fullName},</p>
-          <p>Recebemos sua inscrição na AABB Jequié com sucesso!</p>
-          <p>Em anexo, você encontrará o PDF com todos os dados fornecidos. Por favor, imprima, assine e entregue na sede da associação.</p>
-          <p><strong>Próximos passos:</strong></p>
-          <ul>
-            <li>Imprima o documento em anexo</li>
-            <li>Assine no campo indicado como "Associado"</li>
-            <li>Leve o documento à sede da AABB Jequié para finalizar o processo</li>
-          </ul>
-          <p>Qualquer dúvida, entre em contato através do WhatsApp: ${validatedData.residentialWhatsapp}</p>
-          <p>Atenciosamente,<br>AABB Jequié</p>
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h1 style="color: #1e40af;">Inscrição Recebida com Sucesso!</h1>
+            <p>Olá <strong>${validatedData.fullName}</strong>,</p>
+            <p>Recebemos sua inscrição na AABB Jequié com sucesso!</p>
+            <p><strong>Próximos passos:</strong></p>
+            <ul>
+              <li>Imprima o documento em anexo</li>
+              <li>Assine no campo indicado como "Associado"</li>
+              <li>Leve o documento à sede da AABB Jequié para finalizar o processo</li>
+            </ul>
+            <p>Qualquer dúvida, entre em contato através do WhatsApp: ${validatedData.residentialWhatsapp}</p>
+            <p>Atenciosamente,<br><strong>AABB Jequié</strong></p>
+            <hr>
+            ${applicationHTML}
+          </div>
         `,
-        attachments: [
-          {
-            filename: `inscricao-aabb-${data.id}.pdf`,
-            content: pdfBase64,
-          },
-        ],
       });
       console.log('User email sent successfully');
     } catch (emailError) {
@@ -306,20 +296,20 @@ Deno.serve(async (req) => {
         to: ["hudsonargollo2@gmail.com"],
         subject: `Nova Inscrição - ${validatedData.fullName}`,
         html: `
-          <h1>Nova Inscrição Recebida</h1>
-          <p><strong>Nome:</strong> ${validatedData.fullName}</p>
-          <p><strong>CPF:</strong> ${validatedData.cpf}</p>
-          <p><strong>E-mail:</strong> ${validatedData.email}</p>
-          <p><strong>WhatsApp:</strong> ${validatedData.residentialWhatsapp}</p>
-          <p><strong>Data:</strong> ${new Date().toLocaleString('pt-BR')}</p>
-          <p>O PDF completo com todos os dados está em anexo.</p>
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h1 style="color: #1e40af;">Nova Inscrição Recebida</h1>
+            <div style="background: #f9fafb; padding: 15px; border-left: 4px solid #1e40af; margin: 20px 0;">
+              <p><strong>Nome:</strong> ${validatedData.fullName}</p>
+              <p><strong>CPF:</strong> ${validatedData.cpf}</p>
+              <p><strong>E-mail:</strong> ${validatedData.email}</p>
+              <p><strong>WhatsApp:</strong> ${validatedData.residentialWhatsapp}</p>
+              <p><strong>Data:</strong> ${new Date().toLocaleString('pt-BR')}</p>
+            </div>
+            <hr>
+            <h2>Detalhes Completos:</h2>
+            ${applicationHTML}
+          </div>
         `,
-        attachments: [
-          {
-            filename: `inscricao-aabb-${data.id}.pdf`,
-            content: pdfBase64,
-          },
-        ],
       });
       console.log('Admin email sent successfully');
     } catch (emailError) {
