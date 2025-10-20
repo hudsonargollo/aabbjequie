@@ -3,6 +3,8 @@ import { Input } from "@/components/ui/input";
 import { FormData } from "@/types/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCEP, jequieNeighborhoods } from "@/lib/utils";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface ResidentialAddressStepProps {
   data: FormData;
@@ -10,9 +12,44 @@ interface ResidentialAddressStepProps {
 }
 
 export const ResidentialAddressStep = ({ data, onChange }: ResidentialAddressStepProps) => {
-  const handleCEPChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [loadingCEP, setLoadingCEP] = useState(false);
+
+  const handleCEPChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatCEP(e.target.value);
     onChange('residentialCep', formatted);
+
+    // Only fetch if CEP is complete (9 characters with dash: 00000-000)
+    if (formatted.length === 9) {
+      setLoadingCEP(true);
+      try {
+        const cepNumbers = formatted.replace('-', '');
+        const response = await fetch(`https://viacep.com.br/ws/${cepNumbers}/json/`);
+        const data = await response.json();
+
+        if (data.erro) {
+          toast.error('CEP não encontrado');
+          return;
+        }
+
+        // Auto-fill the fields
+        if (data.logradouro) {
+          onChange('residentialStreet', data.logradouro);
+        }
+        if (data.bairro) {
+          onChange('residentialNeighborhood', data.bairro);
+        }
+        if (data.localidade) {
+          onChange('residentialCity', data.localidade);
+        }
+        
+        toast.success('Endereço encontrado!');
+      } catch (error) {
+        console.error('Error fetching CEP:', error);
+        toast.error('Erro ao buscar CEP');
+      } finally {
+        setLoadingCEP(false);
+      }
+    }
   };
 
   return (
@@ -23,6 +60,19 @@ export const ResidentialAddressStep = ({ data, onChange }: ResidentialAddressSte
       </div>
 
       <div className="space-y-4">
+        <div>
+          <Label htmlFor="residentialCep">CEP *</Label>
+          <Input
+            id="residentialCep"
+            value={data.residentialCep}
+            onChange={handleCEPChange}
+            placeholder="00000-000"
+            className="mt-1"
+            disabled={loadingCEP}
+          />
+          {loadingCEP && <p className="text-xs text-muted-foreground mt-1">Buscando endereço...</p>}
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="md:col-span-2">
             <Label htmlFor="residentialStreet">Rua/Avenida *</Label>
@@ -64,42 +114,30 @@ export const ResidentialAddressStep = ({ data, onChange }: ResidentialAddressSte
                   </SelectItem>
                 ))}
               </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <Label htmlFor="residentialCep">CEP *</Label>
-            <Input
-              id="residentialCep"
-              value={data.residentialCep}
-              onChange={handleCEPChange}
-              placeholder="00000-000"
-              className="mt-1"
-            />
-          </div>
+          </Select>
         </div>
+      </div>
+      <div>
+        <Label htmlFor="residentialCity">Cidade *</Label>
+        <Input
+          id="residentialCity"
+          value={data.residentialCity}
+          onChange={(e) => onChange("residentialCity", e.target.value)}
+          placeholder="Cidade"
+          className="mt-1"
+        />
+      </div>
 
-        <div>
-          <Label htmlFor="residentialCity">Cidade *</Label>
-          <Input
-            id="residentialCity"
-            value={data.residentialCity}
-            onChange={(e) => onChange("residentialCity", e.target.value)}
-            placeholder="Cidade"
-            className="mt-1"
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="residentialWhatsapp">Telefone/WhatsApp *</Label>
-          <Input
-            id="residentialWhatsapp"
-            value={data.residentialWhatsapp}
-            onChange={(e) => onChange("residentialWhatsapp", e.target.value)}
-            placeholder="(00) 00000-0000"
-            className="mt-1"
-          />
-        </div>
+      <div>
+        <Label htmlFor="residentialWhatsapp">Telefone/WhatsApp *</Label>
+        <Input
+          id="residentialWhatsapp"
+          value={data.residentialWhatsapp}
+          onChange={(e) => onChange("residentialWhatsapp", e.target.value)}
+          placeholder="(00) 00000-0000"
+          className="mt-1"
+        />
+      </div>
       </div>
     </div>
   );
