@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { FormProgress } from "@/components/FormProgress";
+import { StickyHeader } from "@/components/StickyHeader";
 import { PersonalDataStep } from "@/components/steps/PersonalDataStep";
 import { ResidentialAddressStep } from "@/components/steps/ResidentialAddressStep";
 import { CommercialAddressStep } from "@/components/steps/CommercialAddressStep";
@@ -108,43 +109,71 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
-      <div className="w-full max-w-4xl mx-auto px-4 py-8">
-        <img src={topoImage} alt="AABB Jequié - Janela Relâmpago" className="w-full rounded-lg shadow-lg mb-8" />
-        
-        <Card className="p-6 md:p-8 shadow-xl">
-          <FormProgress currentStep={currentStep} totalSteps={totalSteps} />
+    <>
+      <StickyHeader currentStep={currentStep} totalSteps={totalSteps} />
+      
+      <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
+        <div className="w-full max-w-4xl mx-auto px-4 py-8 space-y-8">
+          {/* Hero Section */}
+          <div className="space-y-4 animate-fade-in">
+            <img 
+              src={topoImage} 
+              alt="AABB Jequié - Janela Relâmpago" 
+              className="w-full rounded-2xl shadow-2xl"
+            />
+            <div className="text-center">
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+                Inscrição de Sócio
+              </h1>
+              <p className="text-muted-foreground">
+                Preencha os dados abaixo para se tornar um sócio AABB
+              </p>
+            </div>
+          </div>
           
-          <div className="mt-8">
-            {currentStep === 1 && <PersonalDataStep data={formData} onChange={handleChange} />}
-            {currentStep === 2 && <ResidentialAddressStep data={formData} onChange={handleChange} />}
-            {currentStep === 3 && <CommercialAddressStep data={formData} onChange={handleChange} />}
-            {currentStep === 4 && <PaymentStep data={formData} onChange={handleChange} />}
-          </div>
+          {/* Form Card */}
+          <Card className="p-6 md:p-10 shadow-2xl border-2 animate-scale-in">
+            <FormProgress currentStep={currentStep} totalSteps={totalSteps} />
+            
+            <div className="mt-8">
+              {currentStep === 1 && <PersonalDataStep data={formData} onChange={handleChange} />}
+              {currentStep === 2 && <ResidentialAddressStep data={formData} onChange={handleChange} />}
+              {currentStep === 3 && <CommercialAddressStep data={formData} onChange={handleChange} />}
+              {currentStep === 4 && <PaymentStep data={formData} onChange={handleChange} />}
+            </div>
 
-          <div className="flex gap-4 mt-8">
-            {currentStep > 1 && (
-              <Button variant="outline" onClick={handleBack} className="flex-1">
-                Voltar
-              </Button>
-            )}
-            {currentStep < totalSteps ? (
-              <Button onClick={handleNext} className="flex-1 bg-gradient-to-r from-primary to-secondary hover:opacity-90">
-                Próximo
-              </Button>
-            ) : (
-              <Button 
-                onClick={handleSubmit} 
-                className="flex-1 bg-gradient-to-r from-accent to-secondary hover:opacity-90"
-                disabled={loading}
-              >
-                {loading ? "Enviando..." : "Enviar Inscrição"}
-              </Button>
-            )}
-          </div>
-        </Card>
+            {/* Navigation Buttons */}
+            <div className="flex gap-4 mt-10">
+              {currentStep > 1 && (
+                <Button 
+                  variant="outline" 
+                  onClick={handleBack} 
+                  className="flex-1 h-12 text-base font-bold border-2 hover:bg-muted"
+                >
+                  ← Voltar
+                </Button>
+              )}
+              {currentStep < totalSteps ? (
+                <Button 
+                  onClick={handleNext} 
+                  className="flex-1 h-12 text-base font-bold bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  Próximo →
+                </Button>
+              ) : (
+                <Button 
+                  onClick={handleSubmit} 
+                  className="flex-1 h-12 text-base font-bold bg-gradient-to-r from-accent to-secondary hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-300"
+                  disabled={loading}
+                >
+                  {loading ? "Enviando..." : "✓ Enviar Inscrição"}
+                </Button>
+              )}
+            </div>
+          </Card>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
