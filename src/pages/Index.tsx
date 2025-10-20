@@ -8,14 +8,16 @@ import { PersonalDataStep } from "@/components/steps/PersonalDataStep";
 import { ResidentialAddressStep } from "@/components/steps/ResidentialAddressStep";
 import { CommercialAddressStep } from "@/components/steps/CommercialAddressStep";
 import { PaymentStep } from "@/components/steps/PaymentStep";
+import { TermsDialog } from "@/components/TermsDialog";
 import { FormData } from "@/types/form";
 import { toast } from "sonner";
 import topoImage from "@/assets/topo.png";
-import { personalDataSchema, residentialAddressSchema, commercialAddressSchema, paymentSchema, termsSchema } from "@/lib/validations";
+import { personalDataSchema, residentialAddressSchema, commercialAddressSchema, paymentSchema } from "@/lib/validations";
 const Index = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 4;
   const [loading, setLoading] = useState(false);
+  const [showTermsDialog, setShowTermsDialog] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     fullName: "",
     birthDate: "",
@@ -87,20 +89,39 @@ const Index = () => {
       });
     }
   };
+  const handleSubmitClick = () => {
+    try {
+      // Validate payment data before showing terms dialog
+      paymentSchema.parse(formData);
+      setShowTermsDialog(true);
+    } catch (error: any) {
+      if (error.errors) {
+        toast.error(error.errors[0].message);
+      }
+    }
+  };
+
   const handleSubmit = async () => {
     try {
-      // Validate all data
-      paymentSchema.parse(formData);
-      termsSchema.parse(formData);
       setLoading(true);
+      
+      // Set the terms acceptance in form data
+      const submissionData = {
+        ...formData,
+        acceptStatute: true,
+        acceptImageUsage: true
+      };
+
       const {
         data,
         error
       } = await supabase.functions.invoke('submit-application', {
-        body: formData
+        body: submissionData
       });
       if (error) throw error;
+      
       toast.success("Inscrição enviada com sucesso! Você receberá uma confirmação por email e WhatsApp.");
+      setShowTermsDialog(false);
 
       // Reset form
       setFormData({
@@ -180,13 +201,20 @@ const Index = () => {
                 </Button>}
               {currentStep < totalSteps ? <Button onClick={handleNext} className="flex-1 h-14 text-base font-bold uppercase bg-primary text-primary-foreground border-2 border-primary-foreground/20 hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300">
                   CONTINUAR
-                </Button> : <Button onClick={handleSubmit} className="flex-1 h-14 text-base font-bold uppercase bg-accent text-accent-foreground border-2 border-accent-foreground/20 hover:bg-accent/90 shadow-lg hover:shadow-xl transition-all duration-300" disabled={loading || formData.hasCriminalRecord}>
-                  {loading ? "Enviando..." : "✓ Enviar Inscrição"}
+                </Button> : <Button onClick={handleSubmitClick} className="flex-1 h-14 text-base font-bold uppercase bg-accent text-accent-foreground border-2 border-accent-foreground/20 hover:bg-accent/90 shadow-lg hover:shadow-xl transition-all duration-300" disabled={formData.hasCriminalRecord}>
+                  ✓ Enviar Inscrição
                 </Button>}
             </div>
           </Card>
         </div>
       </div>
+
+      <TermsDialog
+        open={showTermsDialog}
+        onOpenChange={setShowTermsDialog}
+        onConfirm={handleSubmit}
+        loading={loading}
+      />
     </>;
 };
 export default Index;
