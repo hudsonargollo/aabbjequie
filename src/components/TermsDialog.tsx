@@ -58,7 +58,7 @@ export const TermsDialog = ({ open, onOpenChange, onConfirm, loading }: TermsDia
                 className="mt-1"
               />
               <Label htmlFor="statute" className="font-normal cursor-pointer leading-relaxed text-sm">
-                Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO).
+                Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO E OUTROS REGULAMENTOS DA AABB).
               </Label>
             </div>
 

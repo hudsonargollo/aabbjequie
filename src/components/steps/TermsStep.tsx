@@ -25,8 +25,8 @@ export const TermsStep = ({ data, onChange }: TermsStepProps) => {
               className="mt-1"
             />
             <Label htmlFor="acceptStatute" className="font-normal cursor-pointer leading-relaxed">
-              Declaro que li, estou ciente e de acordo com o Estatuto Social da AABB e com o 
-              Regulamento Interno da AABB Jequié, comprometendo-me a cumpri-los integralmente. *
+              Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes 
+              (ESTATUTO/ REGIMENTO E OUTROS REGULAMENTOS DA AABB). *
             </Label>
           </div>
 

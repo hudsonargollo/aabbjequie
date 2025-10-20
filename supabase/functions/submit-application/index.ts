@@ -98,7 +98,7 @@ function generateApplicationHTML(data: any): string {
 
       <div class="signature-section">
         <div class="terms">
-          <p><strong>Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/REGIMENTO).</strong></p>
+          <p><strong>Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO E OUTROS REGULAMENTOS DA AABB).</strong></p>
           <p><strong>Autorizo o uso de minha imagem e de meus dependentes em fotos e filmagens com fins não comerciais nas publicações realizadas em eventos produzidos pela Associação em suas dependências, sejam eles culturais/esportivos.</strong></p>
         </div>
 
