@@ -11,34 +11,50 @@ import { PaymentStep } from "@/components/steps/PaymentStep";
 import { FormData } from "@/types/form";
 import { toast } from "sonner";
 import topoImage from "@/assets/topo.png";
-import {
-  personalDataSchema,
-  residentialAddressSchema,
-  commercialAddressSchema,
-  paymentSchema,
-  termsSchema,
-} from "@/lib/validations";
-
+import { personalDataSchema, residentialAddressSchema, commercialAddressSchema, paymentSchema, termsSchema } from "@/lib/validations";
 const Index = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 4;
   const [loading, setLoading] = useState(false);
-  
   const [formData, setFormData] = useState<FormData>({
-    fullName: "", birthDate: "", sex: "", civilStatus: "", cpf: "", rg: "", emissor: "", uf: "",
-    residentialStreet: "", residentialNumber: "", residentialNeighborhood: "", residentialCep: "",
-    residentialCity: "Jequié", residentialWhatsapp: "", email: "",
-    commercialStreet: "", commercialNumber: "", commercialNeighborhood: "", commercialCep: "",
-    commercialCity: "Jequié", commercialWhatsapp: "",
-    paymentMethod: "", monthlyPaymentMethod: "", dueDate: "",
-    paymentToken: "", paymentProcessor: "", lastFourDigits: "",
-    dependents: [], acceptStatute: false, acceptImageUsage: false, hasCriminalRecord: false
+    fullName: "",
+    birthDate: "",
+    sex: "",
+    civilStatus: "",
+    cpf: "",
+    rg: "",
+    emissor: "",
+    uf: "",
+    residentialStreet: "",
+    residentialNumber: "",
+    residentialNeighborhood: "",
+    residentialCep: "",
+    residentialCity: "Jequié",
+    residentialWhatsapp: "",
+    email: "",
+    commercialStreet: "",
+    commercialNumber: "",
+    commercialNeighborhood: "",
+    commercialCep: "",
+    commercialCity: "Jequié",
+    commercialWhatsapp: "",
+    paymentMethod: "",
+    monthlyPaymentMethod: "",
+    dueDate: "",
+    paymentToken: "",
+    paymentProcessor: "",
+    lastFourDigits: "",
+    dependents: [],
+    acceptStatute: false,
+    acceptImageUsage: false,
+    hasCriminalRecord: false
   });
-
   const handleChange = (field: keyof FormData, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
-
   const handleNext = () => {
     // Validate current step before proceeding
     try {
@@ -49,10 +65,12 @@ const Index = () => {
       } else if (currentStep === 3) {
         commercialAddressSchema.parse(formData);
       }
-      
       if (currentStep < totalSteps) {
         setCurrentStep(prev => prev + 1);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
       }
     } catch (error: any) {
       if (error.errors) {
@@ -60,40 +78,63 @@ const Index = () => {
       }
     }
   };
-
   const handleBack = () => {
     if (currentStep > 1) {
       setCurrentStep(prev => prev - 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     }
   };
-
   const handleSubmit = async () => {
     try {
       // Validate all data
       paymentSchema.parse(formData);
       termsSchema.parse(formData);
-
       setLoading(true);
-
-      const { data, error } = await supabase.functions.invoke('submit-application', {
-        body: formData,
+      const {
+        data,
+        error
+      } = await supabase.functions.invoke('submit-application', {
+        body: formData
       });
-
       if (error) throw error;
-
       toast.success("Inscrição enviada com sucesso! Você receberá uma confirmação por email e WhatsApp.");
-      
+
       // Reset form
       setFormData({
-        fullName: "", birthDate: "", sex: "", civilStatus: "", cpf: "", rg: "", emissor: "", uf: "",
-        residentialStreet: "", residentialNumber: "", residentialNeighborhood: "", residentialCep: "",
-        residentialCity: "Jequié", residentialWhatsapp: "", email: "",
-        commercialStreet: "", commercialNumber: "", commercialNeighborhood: "", commercialCep: "",
-        commercialCity: "Jequié", commercialWhatsapp: "",
-        paymentMethod: "", monthlyPaymentMethod: "", dueDate: "",
-        paymentToken: "", paymentProcessor: "", lastFourDigits: "",
-        dependents: [], acceptStatute: false, acceptImageUsage: false, hasCriminalRecord: false
+        fullName: "",
+        birthDate: "",
+        sex: "",
+        civilStatus: "",
+        cpf: "",
+        rg: "",
+        emissor: "",
+        uf: "",
+        residentialStreet: "",
+        residentialNumber: "",
+        residentialNeighborhood: "",
+        residentialCep: "",
+        residentialCity: "Jequié",
+        residentialWhatsapp: "",
+        email: "",
+        commercialStreet: "",
+        commercialNumber: "",
+        commercialNeighborhood: "",
+        commercialCep: "",
+        commercialCity: "Jequié",
+        commercialWhatsapp: "",
+        paymentMethod: "",
+        monthlyPaymentMethod: "",
+        dueDate: "",
+        paymentToken: "",
+        paymentProcessor: "",
+        lastFourDigits: "",
+        dependents: [],
+        acceptStatute: false,
+        acceptImageUsage: false,
+        hasCriminalRecord: false
       });
       setCurrentStep(1);
     } catch (error: any) {
@@ -107,31 +148,19 @@ const Index = () => {
       setLoading(false);
     }
   };
-
-  return (
-    <>
+  return <>
       <StickyHeader currentStep={currentStep} totalSteps={totalSteps} />
       
       <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
         <div className="w-full max-w-4xl mx-auto px-4 py-8 space-y-8">
           {/* Hero Section - Only show on step 1 */}
-          {currentStep === 1 && (
-            <div className="space-y-4 animate-fade-in">
-              <img 
-                src={topoImage} 
-                alt="AABB Jequié - Janela Relâmpago" 
-                className="w-full rounded-2xl shadow-2xl"
-              />
+          {currentStep === 1 && <div className="space-y-4 animate-fade-in">
+              <img src={topoImage} alt="AABB Jequié - Janela Relâmpago" className="w-full rounded-2xl shadow-2xl" />
               <div className="text-center">
-                <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-                  Inscrição de Sócio
-                </h1>
-                <p className="text-muted-foreground">
-                  Preencha os dados abaixo para se tornar um sócio AABB
-                </p>
+                
+                
               </div>
-            </div>
-          )}
+            </div>}
           
           {/* Form Card */}
           <Card className="p-6 md:p-10 shadow-2xl border-2 animate-scale-in">
@@ -146,37 +175,18 @@ const Index = () => {
 
             {/* Navigation Buttons */}
             <div className="flex gap-4 mt-10">
-              {currentStep > 1 && (
-                <Button 
-                  variant="outline" 
-                  onClick={handleBack} 
-                  className="flex-1 h-12 text-base font-bold border-2 hover:bg-muted"
-                >
+              {currentStep > 1 && <Button variant="outline" onClick={handleBack} className="flex-1 h-12 text-base font-bold border-2 hover:bg-muted">
                   ← Voltar
-                </Button>
-              )}
-              {currentStep < totalSteps ? (
-                <Button 
-                  onClick={handleNext} 
-                  className="flex-1 h-12 text-base font-bold bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-300"
-                >
+                </Button>}
+              {currentStep < totalSteps ? <Button onClick={handleNext} className="flex-1 h-12 text-base font-bold bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-300">
                   Próximo →
-                </Button>
-              ) : (
-                <Button 
-                  onClick={handleSubmit} 
-                  className="flex-1 h-12 text-base font-bold bg-gradient-to-r from-accent to-secondary hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-300"
-                  disabled={loading || formData.hasCriminalRecord}
-                >
+                </Button> : <Button onClick={handleSubmit} className="flex-1 h-12 text-base font-bold bg-gradient-to-r from-accent to-secondary hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-300" disabled={loading || formData.hasCriminalRecord}>
                   {loading ? "Enviando..." : "✓ Enviar Inscrição"}
-                </Button>
-              )}
+                </Button>}
             </div>
           </Card>
         </div>
       </div>
-    </>
-  );
+    </>;
 };
-
 export default Index;
