@@ -262,8 +262,9 @@ Deno.serve(async (req) => {
     const applicationHTML = generateApplicationHTML(data);
     
     // Send email to user
+    console.log('Attempting to send confirmation email to user:', validatedData.email);
     try {
-      await resend.emails.send({
+      const emailResult = await resend.emails.send({
         from: "AABB Jequié <onboarding@resend.dev>",
         to: [validatedData.email],
         subject: "Confirmação de Inscrição - AABB Jequié",
@@ -274,8 +275,8 @@ Deno.serve(async (req) => {
             <p>Recebemos sua inscrição na AABB Jequié com sucesso!</p>
             <p><strong>Próximos passos:</strong></p>
             <ul>
-              <li>Imprima o documento em anexo</li>
-              <li>Assine no campo indicado como "Associado"</li>
+              <li>Aguarde o recebimento do documento de confirmação</li>
+              <li>Assine no campo indicado como "ASSINATURA DO TITULAR"</li>
               <li>Leve o documento à sede da AABB Jequié para finalizar o processo</li>
             </ul>
             <p>Qualquer dúvida, entre em contato através do WhatsApp: ${validatedData.residentialWhatsapp}</p>
@@ -285,97 +286,146 @@ Deno.serve(async (req) => {
           </div>
         `,
       });
-      console.log('User email sent successfully');
+      console.log('User email sent successfully:', emailResult);
     } catch (emailError) {
       console.error('Error sending user email:', emailError);
+      console.error('Email error details:', JSON.stringify(emailError, null, 2));
     }
 
-    // Generate PDF receipt
+    // Generate PDF receipt with 2-column layout for splitting
     const pdf = new jsPDF();
     const pageWidth = pdf.internal.pageSize.width;
-    let yPos = 20;
-
-    // Header
-    pdf.setFontSize(16);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('RECIBO DE INSCRIÇÃO', pageWidth / 2, yPos, { align: 'center' });
-    yPos += 10;
-    pdf.setFontSize(14);
-    pdf.text('AABB Jequié', pageWidth / 2, yPos, { align: 'center' });
-    yPos += 15;
-
-    // Personal Data
-    pdf.setFontSize(12);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('DADOS PESSOAIS', 20, yPos);
-    yPos += 7;
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(10);
-    pdf.text(`Nome: ${validatedData.fullName}`, 20, yPos); yPos += 6;
-    pdf.text(`CPF: ${validatedData.cpf}`, 20, yPos); yPos += 6;
-    pdf.text(`RG: ${validatedData.rg}`, 20, yPos); yPos += 6;
-    pdf.text(`Data de Nascimento: ${validatedData.birthDate}`, 20, yPos); yPos += 6;
-    pdf.text(`Sexo: ${validatedData.sex === 'M' ? 'Masculino' : 'Feminino'}`, 20, yPos); yPos += 6;
-    pdf.text(`Estado Civil: ${validatedData.civilStatus}`, 20, yPos); yPos += 10;
-
-    // Residential Address
-    pdf.setFontSize(12);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('ENDEREÇO RESIDENCIAL', 20, yPos);
-    yPos += 7;
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(10);
-    pdf.text(`${validatedData.residentialStreet}, ${validatedData.residentialNumber}`, 20, yPos); yPos += 6;
-    pdf.text(`${validatedData.residentialNeighborhood} - ${validatedData.residentialCity}`, 20, yPos); yPos += 6;
-    pdf.text(`CEP: ${validatedData.residentialCep}`, 20, yPos); yPos += 6;
-    pdf.text(`WhatsApp: ${validatedData.residentialWhatsapp}`, 20, yPos); yPos += 10;
-
-    // Commercial Address
-    pdf.setFontSize(12);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('ENDEREÇO COMERCIAL', 20, yPos);
-    yPos += 7;
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(10);
-    pdf.text(`${validatedData.commercialStreet}, ${validatedData.commercialNumber}`, 20, yPos); yPos += 6;
-    pdf.text(`${validatedData.commercialNeighborhood} - ${validatedData.commercialCity}`, 20, yPos); yPos += 6;
-    pdf.text(`CEP: ${validatedData.commercialCep}`, 20, yPos); yPos += 10;
-
-    // Payment Info
-    pdf.setFontSize(12);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('PAGAMENTO', 20, yPos);
-    yPos += 7;
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(10);
-    pdf.text(`Método de Pagamento da Taxa: ${validatedData.paymentMethod}`, 20, yPos); yPos += 6;
-    pdf.text(`Método Mensal: ${validatedData.monthlyPaymentMethod}`, 20, yPos); yPos += 6;
-    pdf.text(`Dia de Vencimento: ${validatedData.dueDate}`, 20, yPos); yPos += 10;
-
-    // Dependents
-    if (validatedData.dependents && validatedData.dependents.length > 0) {
-      pdf.setFontSize(12);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('DEPENDENTES', 20, yPos);
-      yPos += 7;
-      pdf.setFont('helvetica', 'normal');
-      pdf.setFontSize(10);
+    const pageHeight = pdf.internal.pageSize.height;
+    const columnWidth = pageWidth / 2;
+    
+    // Function to add content to one column
+    const addColumn = (xOffset: number) => {
+      let yPos = 15;
       
-      validatedData.dependents.forEach((dep: any, index: number) => {
-        if (yPos > 250) {
-          pdf.addPage();
-          yPos = 20;
-        }
-        pdf.text(`${index + 1}. ${dep.name} - CPF: ${dep.cpf}`, 20, yPos);
-        yPos += 6;
-      });
+      // Header
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('FICHA DE INSCRIÇÃO', xOffset + columnWidth / 2, yPos, { align: 'center' });
+      yPos += 7;
+      pdf.setFontSize(12);
+      pdf.text('AABB Jequié', xOffset + columnWidth / 2, yPos, { align: 'center' });
+      yPos += 10;
+      
+      // Personal Data
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('DADOS PESSOAIS', xOffset + 5, yPos);
       yPos += 5;
-    }
-
-    // Footer
-    yPos += 10;
-    pdf.setFontSize(9);
-    pdf.text(`Data da Inscrição: ${new Date().toLocaleDateString('pt-BR')}`, 20, yPos);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(8);
+      pdf.text(`Nome: ${validatedData.fullName}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
+      pdf.text(`CPF: ${validatedData.cpf}`, xOffset + 5, yPos); yPos += 4;
+      pdf.text(`RG: ${validatedData.rg}`, xOffset + 5, yPos); yPos += 4;
+      pdf.text(`Nasc: ${validatedData.birthDate}`, xOffset + 5, yPos); yPos += 4;
+      pdf.text(`Sexo: ${validatedData.sex === 'M' ? 'M' : 'F'}`, xOffset + 5, yPos); yPos += 4;
+      pdf.text(`Est. Civil: ${validatedData.civilStatus}`, xOffset + 5, yPos); yPos += 6;
+      
+      // Residential Address
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('ENDEREÇO RESIDENCIAL', xOffset + 5, yPos);
+      yPos += 5;
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(8);
+      pdf.text(`${validatedData.residentialStreet}, ${validatedData.residentialNumber}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
+      pdf.text(`${validatedData.residentialNeighborhood} - ${validatedData.residentialCity}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
+      pdf.text(`CEP: ${validatedData.residentialCep}`, xOffset + 5, yPos); yPos += 4;
+      pdf.text(`WhatsApp: ${validatedData.residentialWhatsapp}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 6;
+      
+      // Commercial Address
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('ENDEREÇO COMERCIAL', xOffset + 5, yPos);
+      yPos += 5;
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(8);
+      pdf.text(`${validatedData.commercialStreet}, ${validatedData.commercialNumber}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
+      pdf.text(`${validatedData.commercialNeighborhood} - ${validatedData.commercialCity}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
+      pdf.text(`CEP: ${validatedData.commercialCep}`, xOffset + 5, yPos); yPos += 6;
+      
+      // Dependents
+      if (validatedData.dependents && validatedData.dependents.length > 0) {
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('DEPENDENTES', xOffset + 5, yPos);
+        yPos += 5;
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(7);
+        
+        validatedData.dependents.forEach((dep: any, index: number) => {
+          pdf.text(`${index + 1}. ${dep.name}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 });
+          yPos += 3;
+          pdf.text(`CPF: ${dep.cpf}`, xOffset + 5, yPos);
+          yPos += 4;
+        });
+        yPos += 3;
+      }
+      
+      // Terms
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('DECLARO E ACEITO', xOffset + 5, yPos);
+      yPos += 5;
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(7);
+      const termsText1 = 'Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO E OUTROS REGULAMENTOS DA AABB).';
+      const splitTerms1 = pdf.splitTextToSize(termsText1, columnWidth - 10);
+      pdf.text(splitTerms1, xOffset + 5, yPos);
+      yPos += splitTerms1.length * 3 + 3;
+      
+      const termsText2 = 'Autorizo o uso de minha imagem e de meus dependentes em fotos e filmagens com fins não comerciais nas publicações realizadas em eventos produzidos pela Associação.';
+      const splitTerms2 = pdf.splitTextToSize(termsText2, columnWidth - 10);
+      pdf.text(splitTerms2, xOffset + 5, yPos);
+      yPos += splitTerms2.length * 3 + 8;
+      
+      // First Signature
+      pdf.setFontSize(8);
+      pdf.line(xOffset + 10, yPos, xOffset + columnWidth - 10, yPos);
+      yPos += 4;
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('ASSINATURA DO TITULAR', xOffset + columnWidth / 2, yPos, { align: 'center' });
+      yPos += 8;
+      
+      // Payment Info
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('PAGAMENTO', xOffset + 5, yPos);
+      yPos += 5;
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(8);
+      pdf.text(`Taxa: ${validatedData.paymentMethod}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
+      pdf.text(`Mensal: ${validatedData.monthlyPaymentMethod}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
+      pdf.text(`Vencimento: ${validatedData.dueDate}`, xOffset + 5, yPos); yPos += 8;
+      
+      // Second Signature
+      pdf.setFontSize(8);
+      pdf.line(xOffset + 10, yPos, xOffset + columnWidth - 10, yPos);
+      yPos += 4;
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('ASSINATURA DO TITULAR', xOffset + columnWidth / 2, yPos, { align: 'center' });
+      yPos += 8;
+      
+      // Date
+      pdf.setFontSize(7);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, xOffset + 5, yPos);
+    };
+    
+    // Add both columns
+    addColumn(0); // Left column
+    
+    // Add vertical dividing line
+    pdf.setDrawColor(200, 200, 200);
+    pdf.setLineDash([2, 2]);
+    pdf.line(pageWidth / 2, 10, pageWidth / 2, pageHeight - 10);
+    pdf.setLineDash([]);
+    
+    addColumn(columnWidth); // Right column
     
     const pdfBase64 = pdf.output('datauristring').split(',')[1];
 
