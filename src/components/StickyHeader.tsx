@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import aabbLogo from "@/assets/aabb-logo.webp";
+import aabbLogo from "@/assets/aabb-logo.png";
 
 interface StickyHeaderProps {
   currentStep: number;
