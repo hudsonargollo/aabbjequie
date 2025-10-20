@@ -18,13 +18,7 @@ export type Database = {
         Row: {
           accept_image_usage: boolean
           accept_statute: boolean
-          bank_account: string | null
-          bank_agency: string | null
-          bank_dv: string | null
           birth_date: string
-          card_flag: string | null
-          card_number: string | null
-          card_validity: string | null
           civil_status: string
           commercial_cep: string
           commercial_city: string
@@ -41,8 +35,11 @@ export type Database = {
           emissor: string
           full_name: string
           id: string
+          last_four_digits: string | null
           monthly_payment_method: string
           payment_method: string
+          payment_processor: string | null
+          payment_token: string | null
           residential_cep: string
           residential_city: string
           residential_neighborhood: string
@@ -53,17 +50,12 @@ export type Database = {
           rg: string
           sex: string
           uf: string
+          user_id: string
         }
         Insert: {
           accept_image_usage?: boolean
           accept_statute?: boolean
-          bank_account?: string | null
-          bank_agency?: string | null
-          bank_dv?: string | null
           birth_date: string
-          card_flag?: string | null
-          card_number?: string | null
-          card_validity?: string | null
           civil_status: string
           commercial_cep: string
           commercial_city: string
@@ -80,8 +72,11 @@ export type Database = {
           emissor: string
           full_name: string
           id?: string
+          last_four_digits?: string | null
           monthly_payment_method: string
           payment_method: string
+          payment_processor?: string | null
+          payment_token?: string | null
           residential_cep: string
           residential_city: string
           residential_neighborhood: string
@@ -92,17 +87,12 @@ export type Database = {
           rg: string
           sex: string
           uf: string
+          user_id: string
         }
         Update: {
           accept_image_usage?: boolean
           accept_statute?: boolean
-          bank_account?: string | null
-          bank_agency?: string | null
-          bank_dv?: string | null
           birth_date?: string
-          card_flag?: string | null
-          card_number?: string | null
-          card_validity?: string | null
           civil_status?: string
           commercial_cep?: string
           commercial_city?: string
@@ -119,8 +109,11 @@ export type Database = {
           emissor?: string
           full_name?: string
           id?: string
+          last_four_digits?: string | null
           monthly_payment_method?: string
           payment_method?: string
+          payment_processor?: string | null
+          payment_token?: string | null
           residential_cep?: string
           residential_city?: string
           residential_neighborhood?: string
@@ -131,6 +124,28 @@ export type Database = {
           rg?: string
           sex?: string
           uf?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
         }
         Relationships: []
       }
@@ -139,10 +154,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -269,6 +290,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const

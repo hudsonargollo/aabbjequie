@@ -41,16 +41,13 @@ export interface FormData {
   commercialWhatsapp: string;
   commercialPhone: string;
   
-  // Pagamento
+  // Pagamento (no sensitive data stored)
   paymentMethod: string;
   monthlyPaymentMethod: string;
-  bankAgency: string;
-  bankAccount: string;
-  bankDv: string;
-  cardNumber: string;
-  cardValidity: string;
-  cardFlag: string;
   dueDate: string;
+  paymentToken?: string;
+  paymentProcessor?: string;
+  lastFourDigits?: string;
   
   // Dependentes
   dependents: Dependent[];

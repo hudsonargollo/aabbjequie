@@ -1,8 +1,9 @@
-import { Input } from "@/components/ui/input";
+import { FormData } from "@/types/form";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FormData } from "@/types/form";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 interface PaymentStepProps {
   data: FormData;
@@ -14,7 +15,16 @@ export const PaymentStep = ({ data, onChange }: PaymentStepProps) => {
     <div className="space-y-6 animate-fade-in">
       <div>
         <h2 className="text-2xl font-bold text-primary mb-2">Forma de Pagamento</h2>
-        <p className="text-muted-foreground">Como você prefere pagar?</p>
+        <p className="text-muted-foreground mb-6">
+          Escolha a forma de pagamento da taxa de adesão e das mensalidades
+        </p>
+
+        <Alert className="mb-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Por segurança, não armazenamos dados de cartão de crédito ou conta bancária. O processamento de pagamentos será realizado de forma segura após a aprovação da inscrição.
+          </AlertDescription>
+        </Alert>
       </div>
 
       <div className="space-y-4">
@@ -67,39 +77,19 @@ export const PaymentStep = ({ data, onChange }: PaymentStepProps) => {
         </div>
 
         {data.monthlyPaymentMethod === "conta_corrente" && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 animate-fade-in">
-            <div>
-              <Label htmlFor="bankAgency">Agência</Label>
-              <Input id="bankAgency" value={data.bankAgency} onChange={(e) => onChange("bankAgency", e.target.value)} />
-            </div>
-            <div>
-              <Label htmlFor="bankAccount">Conta</Label>
-              <Input id="bankAccount" value={data.bankAccount} onChange={(e) => onChange("bankAccount", e.target.value)} />
-            </div>
-            <div>
-              <Label htmlFor="bankDv">DV</Label>
-              <Input id="bankDv" value={data.bankDv} onChange={(e) => onChange("bankDv", e.target.value)} />
-            </div>
-          </div>
+          <Alert>
+            <AlertDescription>
+              Os dados bancários serão solicitados após a aprovação da inscrição, por questões de segurança.
+            </AlertDescription>
+          </Alert>
         )}
 
         {data.monthlyPaymentMethod === "cartao_credito" && (
-          <div className="space-y-4 animate-fade-in">
-            <div>
-              <Label htmlFor="cardNumber">Número do Cartão</Label>
-              <Input id="cardNumber" value={data.cardNumber} onChange={(e) => onChange("cardNumber", e.target.value)} placeholder="0000 0000 0000 0000" />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="cardValidity">Validade</Label>
-                <Input id="cardValidity" value={data.cardValidity} onChange={(e) => onChange("cardValidity", e.target.value)} placeholder="MM/AA" />
-              </div>
-              <div>
-                <Label htmlFor="cardFlag">Bandeira</Label>
-                <Input id="cardFlag" value={data.cardFlag} onChange={(e) => onChange("cardFlag", e.target.value)} />
-              </div>
-            </div>
-          </div>
+          <Alert>
+            <AlertDescription>
+              Os dados do cartão serão solicitados após a aprovação da inscrição através de um link seguro de pagamento.
+            </AlertDescription>
+          </Alert>
         )}
 
         <div>
