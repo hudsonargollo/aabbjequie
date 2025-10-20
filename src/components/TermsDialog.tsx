@@ -74,22 +74,7 @@ export const TermsDialog = ({ open, onOpenChange, onConfirm, loading }: TermsDia
               </Label>
             </div>
           </div>
-
-          <div className="space-y-6 pt-6 border-t">
-            <div className="space-y-2">
-              <div className="border-b border-foreground pb-1">
-                <p className="text-sm font-medium">Associado</p>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="border-b border-foreground pb-1">
-                <p className="text-sm font-medium">Associação Atlética Bando do Brasil</p>
-              </div>
-            </div>
-          </div>
         </div>
-
         <DialogFooter className="gap-2 sm:gap-0">
           <Button
             variant="outline"
