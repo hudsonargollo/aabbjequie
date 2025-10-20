@@ -21,8 +21,7 @@ export const personalDataSchema = z.object({
   civilStatus: z.string().min(1, "Selecione o estado civil"),
   cpf: z.string().regex(cpfRegex, "CPF deve estar no formato XXX.XXX.XXX-XX"),
   rg: z.string().trim().min(5, "RG inválido").max(20),
-  emissor: z.string().trim().min(2, "Emissor inválido").max(20),
-  uf: z.string().length(2, "UF deve ter 2 caracteres"),
+  email: z.string().trim().email("Email inválido").max(255, "Email muito longo"),
 });
 
 export const residentialAddressSchema = z.object({
@@ -32,7 +31,6 @@ export const residentialAddressSchema = z.object({
   residentialCep: z.string().regex(cepRegex, "CEP deve estar no formato XXXXX-XXX"),
   residentialCity: z.string().trim().min(2, "Cidade muito curta").max(100),
   residentialWhatsapp: z.string().regex(phoneRegex, "Telefone/WhatsApp inválido"),
-  email: z.string().trim().email("Email inválido").max(255, "Email muito longo"),
 });
 
 export const commercialAddressSchema = z.object({

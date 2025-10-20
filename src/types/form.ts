@@ -19,8 +19,7 @@ export interface FormData {
   civilStatus: string;
   cpf: string;
   rg: string;
-  emissor: string;
-  uf: string;
+  email: string;
   
   // Endereço Residencial
   residentialStreet: string;
@@ -29,7 +28,6 @@ export interface FormData {
   residentialCep: string;
   residentialCity: string;
   residentialWhatsapp: string;
-  email: string;
   
   // Endereço Comercial
   commercialStreet: string;

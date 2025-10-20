@@ -72,51 +72,6 @@ export const PersonalDataStep = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="emissor">Emissor *</Label>
-            <Input id="emissor" value={data.emissor} onChange={e => onChange("emissor", e.target.value)} placeholder="SSP" className="mt-1" />
-          </div>
-
-          <div>
-            <Label htmlFor="uf">UF *</Label>
-            <Select value={data.uf} onValueChange={value => onChange("uf", value)}>
-              <SelectTrigger className="mt-1">
-                <SelectValue placeholder="Selecione o estado" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="AC">AC - Acre</SelectItem>
-                <SelectItem value="AL">AL - Alagoas</SelectItem>
-                <SelectItem value="AP">AP - Amapá</SelectItem>
-                <SelectItem value="AM">AM - Amazonas</SelectItem>
-                <SelectItem value="BA">BA - Bahia</SelectItem>
-                <SelectItem value="CE">CE - Ceará</SelectItem>
-                <SelectItem value="DF">DF - Distrito Federal</SelectItem>
-                <SelectItem value="ES">ES - Espírito Santo</SelectItem>
-                <SelectItem value="GO">GO - Goiás</SelectItem>
-                <SelectItem value="MA">MA - Maranhão</SelectItem>
-                <SelectItem value="MT">MT - Mato Grosso</SelectItem>
-                <SelectItem value="MS">MS - Mato Grosso do Sul</SelectItem>
-                <SelectItem value="MG">MG - Minas Gerais</SelectItem>
-                <SelectItem value="PA">PA - Pará</SelectItem>
-                <SelectItem value="PB">PB - Paraíba</SelectItem>
-                <SelectItem value="PR">PR - Paraná</SelectItem>
-                <SelectItem value="PE">PE - Pernambuco</SelectItem>
-                <SelectItem value="PI">PI - Piauí</SelectItem>
-                <SelectItem value="RJ">RJ - Rio de Janeiro</SelectItem>
-                <SelectItem value="RN">RN - Rio Grande do Norte</SelectItem>
-                <SelectItem value="RS">RS - Rio Grande do Sul</SelectItem>
-                <SelectItem value="RO">RO - Rondônia</SelectItem>
-                <SelectItem value="RR">RR - Roraima</SelectItem>
-                <SelectItem value="SC">SC - Santa Catarina</SelectItem>
-                <SelectItem value="SP">SP - São Paulo</SelectItem>
-                <SelectItem value="SE">SE - Sergipe</SelectItem>
-                <SelectItem value="TO">TO - Tocantins</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
         <div>
           <Label htmlFor="email">E-mail *</Label>
           <Input id="email" type="email" value={data.email} onChange={e => onChange("email", e.target.value)} placeholder="seu@email.com" className="mt-1" />

@@ -100,18 +100,6 @@ export const ResidentialAddressStep = ({ data, onChange }: ResidentialAddressSte
             className="mt-1"
           />
         </div>
-
-        <div>
-          <Label htmlFor="email">Email *</Label>
-          <Input
-            id="email"
-            type="email"
-            value={data.email}
-            onChange={(e) => onChange("email", e.target.value)}
-            placeholder="seu@email.com"
-            className="mt-1"
-          />
-        </div>
       </div>
     </div>
   );
