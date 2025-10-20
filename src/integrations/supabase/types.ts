@@ -14,7 +14,126 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      applications: {
+        Row: {
+          accept_image_usage: boolean
+          accept_statute: boolean
+          bank_account: string | null
+          bank_agency: string | null
+          bank_dv: string | null
+          birth_date: string
+          card_flag: string | null
+          card_number: string | null
+          card_validity: string | null
+          civil_status: string
+          commercial_cep: string
+          commercial_city: string
+          commercial_neighborhood: string
+          commercial_number: string
+          commercial_phone: string | null
+          commercial_street: string
+          commercial_whatsapp: string | null
+          cpf: string
+          created_at: string
+          dependents: Json | null
+          due_date: string
+          email: string
+          emissor: string
+          full_name: string
+          id: string
+          monthly_payment_method: string
+          payment_method: string
+          residential_cep: string
+          residential_city: string
+          residential_neighborhood: string
+          residential_number: string
+          residential_phone: string | null
+          residential_street: string
+          residential_whatsapp: string
+          rg: string
+          sex: string
+          uf: string
+        }
+        Insert: {
+          accept_image_usage?: boolean
+          accept_statute?: boolean
+          bank_account?: string | null
+          bank_agency?: string | null
+          bank_dv?: string | null
+          birth_date: string
+          card_flag?: string | null
+          card_number?: string | null
+          card_validity?: string | null
+          civil_status: string
+          commercial_cep: string
+          commercial_city: string
+          commercial_neighborhood: string
+          commercial_number: string
+          commercial_phone?: string | null
+          commercial_street: string
+          commercial_whatsapp?: string | null
+          cpf: string
+          created_at?: string
+          dependents?: Json | null
+          due_date: string
+          email: string
+          emissor: string
+          full_name: string
+          id?: string
+          monthly_payment_method: string
+          payment_method: string
+          residential_cep: string
+          residential_city: string
+          residential_neighborhood: string
+          residential_number: string
+          residential_phone?: string | null
+          residential_street: string
+          residential_whatsapp: string
+          rg: string
+          sex: string
+          uf: string
+        }
+        Update: {
+          accept_image_usage?: boolean
+          accept_statute?: boolean
+          bank_account?: string | null
+          bank_agency?: string | null
+          bank_dv?: string | null
+          birth_date?: string
+          card_flag?: string | null
+          card_number?: string | null
+          card_validity?: string | null
+          civil_status?: string
+          commercial_cep?: string
+          commercial_city?: string
+          commercial_neighborhood?: string
+          commercial_number?: string
+          commercial_phone?: string | null
+          commercial_street?: string
+          commercial_whatsapp?: string | null
+          cpf?: string
+          created_at?: string
+          dependents?: Json | null
+          due_date?: string
+          email?: string
+          emissor?: string
+          full_name?: string
+          id?: string
+          monthly_payment_method?: string
+          payment_method?: string
+          residential_cep?: string
+          residential_city?: string
+          residential_neighborhood?: string
+          residential_number?: string
+          residential_phone?: string | null
+          residential_street?: string
+          residential_whatsapp?: string
+          rg?: string
+          sex?: string
+          uf?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
