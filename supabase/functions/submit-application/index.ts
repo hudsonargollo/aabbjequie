@@ -271,16 +271,7 @@ Deno.serve(async (req) => {
     const addColumn = (xOffset: number) => {
       let yPos = 15;
       
-      // Add logo centered at the top
-      try {
-        const logoWidth = 15;
-        const logoHeight = 15;
-        const logoX = xOffset + (columnWidth - logoWidth) / 2;
-        pdf.addImage(AABB_LOGO_BASE64, 'PNG', logoX, yPos, logoWidth, logoHeight);
-      } catch (e) {
-        console.log('Could not add logo:', e);
-      }
-      yPos += 20;
+      // Logo removed per user request
       
       // Header
       pdf.setFontSize(14);
@@ -352,20 +343,11 @@ Deno.serve(async (req) => {
       pdf.text('TERMOS E AUTORIZAÇÃO', xOffset + 5, yPos);
       yPos += 5;
       
-      // Calculate box height for terms
+      // Terms text without box
       const termsText1 = 'Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO E OUTROS REGULAMENTOS DA AABB).';
       const termsText2 = 'Autorizo o uso de minha imagem e de meus dependentes em fotos e filmagens com fins não comerciais nas publicações realizadas em eventos produzidos pela Associação.';
-      const splitTerms1 = pdf.splitTextToSize(termsText1, columnWidth - 17);
-      const splitTerms2 = pdf.splitTextToSize(termsText2, columnWidth - 17);
-      const boxHeight = (splitTerms1.length + splitTerms2.length) * 3 + 12;
-      
-      // Draw yellow background box with blue stroke and rounded corners
-      pdf.setFillColor(255, 255, 200, 0.3); // Yellow semi-transparent
-      pdf.setDrawColor(0, 0, 255); // Blue stroke
-      pdf.setLineWidth(0.3);
-      pdf.roundedRect(xOffset + 5, yPos, columnWidth - 10, boxHeight, 2, 2, 'FD');
-      
-      yPos += 3;
+      const splitTerms1 = pdf.splitTextToSize(termsText1, columnWidth - 15);
+      const splitTerms2 = pdf.splitTextToSize(termsText2, columnWidth - 15);
       
       // First checkbox and text
       pdf.setFont('helvetica', 'normal');
