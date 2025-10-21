@@ -72,6 +72,51 @@ export const PersonalDataStep = ({
           </div>
         </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="emissor">Órgão Emissor *</Label>
+            <Input id="emissor" value={data.emissor} onChange={e => onChange("emissor", e.target.value)} placeholder="SSP" className="mt-1" />
+          </div>
+
+          <div>
+            <Label htmlFor="uf">UF *</Label>
+            <Select value={data.uf} onValueChange={value => onChange("uf", value)}>
+              <SelectTrigger className="mt-1">
+                <SelectValue placeholder="Selecione" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="AC">AC</SelectItem>
+                <SelectItem value="AL">AL</SelectItem>
+                <SelectItem value="AP">AP</SelectItem>
+                <SelectItem value="AM">AM</SelectItem>
+                <SelectItem value="BA">BA</SelectItem>
+                <SelectItem value="CE">CE</SelectItem>
+                <SelectItem value="DF">DF</SelectItem>
+                <SelectItem value="ES">ES</SelectItem>
+                <SelectItem value="GO">GO</SelectItem>
+                <SelectItem value="MA">MA</SelectItem>
+                <SelectItem value="MT">MT</SelectItem>
+                <SelectItem value="MS">MS</SelectItem>
+                <SelectItem value="MG">MG</SelectItem>
+                <SelectItem value="PA">PA</SelectItem>
+                <SelectItem value="PB">PB</SelectItem>
+                <SelectItem value="PR">PR</SelectItem>
+                <SelectItem value="PE">PE</SelectItem>
+                <SelectItem value="PI">PI</SelectItem>
+                <SelectItem value="RJ">RJ</SelectItem>
+                <SelectItem value="RN">RN</SelectItem>
+                <SelectItem value="RS">RS</SelectItem>
+                <SelectItem value="RO">RO</SelectItem>
+                <SelectItem value="RR">RR</SelectItem>
+                <SelectItem value="SC">SC</SelectItem>
+                <SelectItem value="SP">SP</SelectItem>
+                <SelectItem value="SE">SE</SelectItem>
+                <SelectItem value="TO">TO</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
         <div>
           <Label htmlFor="email">E-mail *</Label>
           <Input id="email" type="email" value={data.email} onChange={e => onChange("email", e.target.value)} placeholder="seu@email.com" className="mt-1" />

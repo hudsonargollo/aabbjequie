@@ -21,6 +21,8 @@ export const personalDataSchema = z.object({
   civilStatus: z.string().min(1, "Selecione o estado civil"),
   cpf: z.string().regex(cpfRegex, "CPF deve estar no formato XXX.XXX.XXX-XX"),
   rg: z.string().trim().min(5, "RG inválido").max(20),
+  emissor: z.string().trim().min(2, "Órgão emissor inválido").max(20),
+  uf: z.string().length(2, "Selecione a UF"),
   email: z.string().trim().email("Email inválido").max(255, "Email muito longo"),
 });
 
