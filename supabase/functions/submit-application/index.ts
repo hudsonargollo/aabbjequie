@@ -427,9 +427,138 @@ Deno.serve(async (req) => {
       // Don't fail the whole request if user email fails
     }
 
-    // Send email to admin with PDF attachment (reusing same PDF)
-    // PDF already generated above for user email
-    // Send email to admin with PDF attachment
+    // Generate comprehensive PDF for admin
+    const adminPdf = new jsPDF();
+    let yPos = 20;
+    
+    // Header
+    adminPdf.setFontSize(18);
+    adminPdf.setFont('helvetica', 'bold');
+    adminPdf.text('FICHA DE INSCRIÇÃO COMPLETA', 105, yPos, { align: 'center' });
+    yPos += 10;
+    adminPdf.setFontSize(14);
+    adminPdf.text('AABB Jequié', 105, yPos, { align: 'center' });
+    yPos += 15;
+    
+    // Personal Data
+    adminPdf.setFontSize(12);
+    adminPdf.setFont('helvetica', 'bold');
+    adminPdf.text('DADOS PESSOAIS', 20, yPos);
+    yPos += 7;
+    adminPdf.setFont('helvetica', 'normal');
+    adminPdf.setFontSize(10);
+    adminPdf.text(`Nome Completo: ${validatedData.fullName}`, 20, yPos); yPos += 6;
+    adminPdf.text(`CPF: ${validatedData.cpf}`, 20, yPos); yPos += 6;
+    adminPdf.text(`RG: ${validatedData.rg}`, 20, yPos); yPos += 6;
+    adminPdf.text(`Data de Nascimento: ${validatedData.birthDate}`, 20, yPos); yPos += 6;
+    adminPdf.text(`Sexo: ${validatedData.sex === 'M' ? 'Masculino' : 'Feminino'}`, 20, yPos); yPos += 6;
+    adminPdf.text(`Estado Civil: ${validatedData.civilStatus}`, 20, yPos); yPos += 6;
+    adminPdf.text(`E-mail: ${validatedData.email}`, 20, yPos); yPos += 10;
+    
+    // Residential Address
+    adminPdf.setFontSize(12);
+    adminPdf.setFont('helvetica', 'bold');
+    adminPdf.text('ENDEREÇO RESIDENCIAL', 20, yPos);
+    yPos += 7;
+    adminPdf.setFont('helvetica', 'normal');
+    adminPdf.setFontSize(10);
+    adminPdf.text(`Rua/Avenida: ${validatedData.residentialStreet}`, 20, yPos); yPos += 6;
+    adminPdf.text(`Número: ${validatedData.residentialNumber}`, 20, yPos); yPos += 6;
+    adminPdf.text(`Bairro: ${validatedData.residentialNeighborhood}`, 20, yPos); yPos += 6;
+    adminPdf.text(`CEP: ${validatedData.residentialCep}`, 20, yPos); yPos += 6;
+    adminPdf.text(`Cidade: ${validatedData.residentialCity}`, 20, yPos); yPos += 6;
+    adminPdf.text(`WhatsApp: ${validatedData.residentialWhatsapp}`, 20, yPos); yPos += 6;
+    if (validatedData.residentialPhone) {
+      adminPdf.text(`Telefone: ${validatedData.residentialPhone}`, 20, yPos); yPos += 6;
+    }
+    yPos += 4;
+    
+    // Commercial Address
+    adminPdf.setFontSize(12);
+    adminPdf.setFont('helvetica', 'bold');
+    adminPdf.text('ENDEREÇO COMERCIAL', 20, yPos);
+    yPos += 7;
+    adminPdf.setFont('helvetica', 'normal');
+    adminPdf.setFontSize(10);
+    adminPdf.text(`Rua/Avenida: ${validatedData.commercialStreet}`, 20, yPos); yPos += 6;
+    adminPdf.text(`Número: ${validatedData.commercialNumber}`, 20, yPos); yPos += 6;
+    adminPdf.text(`Bairro: ${validatedData.commercialNeighborhood}`, 20, yPos); yPos += 6;
+    adminPdf.text(`CEP: ${validatedData.commercialCep}`, 20, yPos); yPos += 6;
+    adminPdf.text(`Cidade: ${validatedData.commercialCity}`, 20, yPos); yPos += 6;
+    if (validatedData.commercialWhatsapp) {
+      adminPdf.text(`WhatsApp: ${validatedData.commercialWhatsapp}`, 20, yPos); yPos += 6;
+    }
+    if (validatedData.commercialPhone) {
+      adminPdf.text(`Telefone: ${validatedData.commercialPhone}`, 20, yPos); yPos += 6;
+    }
+    yPos += 4;
+    
+    // Payment Info
+    adminPdf.setFontSize(12);
+    adminPdf.setFont('helvetica', 'bold');
+    adminPdf.text('FORMA DE PAGAMENTO', 20, yPos);
+    yPos += 7;
+    adminPdf.setFont('helvetica', 'normal');
+    adminPdf.setFontSize(10);
+    adminPdf.text(`Método de Pagamento da Taxa: ${validatedData.paymentMethod}`, 20, yPos); yPos += 6;
+    adminPdf.text(`Método de Pagamento Mensal: ${validatedData.monthlyPaymentMethod}`, 20, yPos); yPos += 6;
+    adminPdf.text(`Dia de Vencimento: ${validatedData.dueDate}`, 20, yPos); yPos += 10;
+    
+    // Dependents
+    if (validatedData.dependents && validatedData.dependents.length > 0) {
+      adminPdf.setFontSize(12);
+      adminPdf.setFont('helvetica', 'bold');
+      adminPdf.text('DEPENDENTES', 20, yPos);
+      yPos += 7;
+      adminPdf.setFont('helvetica', 'normal');
+      adminPdf.setFontSize(10);
+      
+      validatedData.dependents.forEach((dep: any, index: number) => {
+        if (yPos > 250) {
+          adminPdf.addPage();
+          yPos = 20;
+        }
+        adminPdf.setFont('helvetica', 'bold');
+        adminPdf.text(`Dependente ${index + 1}:`, 20, yPos); yPos += 6;
+        adminPdf.setFont('helvetica', 'normal');
+        adminPdf.text(`Nome: ${dep.name}`, 25, yPos); yPos += 6;
+        adminPdf.text(`CPF: ${dep.cpf}`, 25, yPos); yPos += 6;
+        adminPdf.text(`RG: ${dep.rg}`, 25, yPos); yPos += 6;
+        adminPdf.text(`Emissor: ${dep.emissor} - ${dep.uf}`, 25, yPos); yPos += 6;
+        adminPdf.text(`Data de Nascimento: ${dep.birthDate}`, 25, yPos); yPos += 6;
+        adminPdf.text(`Sexo: ${dep.sex === 'M' ? 'Masculino' : 'Feminino'}`, 25, yPos); yPos += 6;
+        adminPdf.text(`Parentesco: ${dep.kinship}`, 25, yPos); yPos += 6;
+        adminPdf.text(`E-mail: ${dep.email}`, 25, yPos); yPos += 6;
+        adminPdf.text(`Universitário: ${dep.isUniversity ? 'Sim' : 'Não'}`, 25, yPos); yPos += 8;
+      });
+    }
+    
+    // Terms
+    if (yPos > 220) {
+      adminPdf.addPage();
+      yPos = 20;
+    }
+    adminPdf.setFontSize(12);
+    adminPdf.setFont('helvetica', 'bold');
+    adminPdf.text('TERMOS ACEITOS', 20, yPos);
+    yPos += 7;
+    adminPdf.setFont('helvetica', 'normal');
+    adminPdf.setFontSize(9);
+    const terms1 = adminPdf.splitTextToSize('✓ Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO E OUTROS REGULAMENTOS DA AABB).', 170);
+    adminPdf.text(terms1, 20, yPos);
+    yPos += terms1.length * 5 + 3;
+    const terms2 = adminPdf.splitTextToSize('✓ Autorizo o uso de minha imagem e de meus dependentes em fotos e filmagens com fins não comerciais nas publicações realizadas em eventos produzidos pela Associação.', 170);
+    adminPdf.text(terms2, 20, yPos);
+    yPos += terms2.length * 5 + 10;
+    
+    // Footer
+    adminPdf.setFontSize(9);
+    adminPdf.setFont('helvetica', 'italic');
+    adminPdf.text(`Data da Inscrição: ${new Date().toLocaleString('pt-BR')}`, 20, yPos);
+    
+    const adminPdfBase64 = adminPdf.output('datauristring').split(',')[1];
+    
+    // Send email to admin with both PDFs
     try {
       await resend.emails.send({
         from: "AABB Jequié <cadastro@aabbjequie.online>",
@@ -445,7 +574,11 @@ Deno.serve(async (req) => {
               <p><strong>WhatsApp:</strong> ${validatedData.residentialWhatsapp}</p>
               <p><strong>Data:</strong> ${new Date().toLocaleString('pt-BR')}</p>
             </div>
-            <p>O recibo completo está em anexo.</p>
+            <p>Dois arquivos estão anexados:</p>
+            <ul>
+              <li><strong>Recibo:</strong> Versão compacta para impressão</li>
+              <li><strong>Inscrição Completa:</strong> Todos os dados detalhados</li>
+            </ul>
           </div>
         `,
         attachments: [
@@ -453,9 +586,13 @@ Deno.serve(async (req) => {
             filename: `recibo-${validatedData.cpf.replace(/\D/g, '')}.pdf`,
             content: pdfBase64,
           },
+          {
+            filename: `inscricao-completa-${validatedData.cpf.replace(/\D/g, '')}.pdf`,
+            content: adminPdfBase64,
+          },
         ],
       });
-      console.log('Admin email sent successfully with PDF attachment');
+      console.log('Admin email sent successfully with both PDF attachments');
     } catch (emailError) {
       console.error('Error sending admin email:', emailError);
     }
