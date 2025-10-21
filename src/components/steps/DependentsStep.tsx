@@ -120,14 +120,34 @@ export const DependentsStep = ({ data, onChange }: DependentsStepProps) => {
               <Input id="depKinship" value={currentDependent.kinship} onChange={(e) => setCurrentDependent({ ...currentDependent, kinship: e.target.value })} placeholder="Ex: Filho(a), Cônjuge, etc" />
             </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="depCpf">CPF</Label>
+                <Input id="depCpf" value={currentDependent.cpf} onChange={(e) => setCurrentDependent({ ...currentDependent, cpf: e.target.value })} placeholder="000.000.000-00" />
+              </div>
+              <div>
+                <Label htmlFor="depRg">RG</Label>
+                <Input id="depRg" value={currentDependent.rg} onChange={(e) => setCurrentDependent({ ...currentDependent, rg: e.target.value })} />
+              </div>
+            </div>
+
             <div>
               <Label htmlFor="depEmail">E-mail</Label>
               <Input id="depEmail" type="email" value={currentDependent.email} onChange={(e) => setCurrentDependent({ ...currentDependent, email: e.target.value })} />
             </div>
 
-            <div className="flex items-center space-x-2">
-              <Checkbox id="depUniversity" checked={currentDependent.isUniversity} onCheckedChange={(checked) => setCurrentDependent({ ...currentDependent, isUniversity: checked as boolean })} />
-              <Label htmlFor="depUniversity" className="font-normal cursor-pointer">Universitário</Label>
+            <div>
+              <Label>Universitário?</Label>
+              <RadioGroup value={currentDependent.isUniversity ? "yes" : "no"} onValueChange={(value) => setCurrentDependent({ ...currentDependent, isUniversity: value === "yes" })} className="flex gap-4 mt-2">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="yes" id="depUnivYes" />
+                  <Label htmlFor="depUnivYes" className="font-normal cursor-pointer">Sim</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="no" id="depUnivNo" />
+                  <Label htmlFor="depUnivNo" className="font-normal cursor-pointer">Não</Label>
+                </div>
+              </RadioGroup>
             </div>
 
             <div className="flex gap-2">
