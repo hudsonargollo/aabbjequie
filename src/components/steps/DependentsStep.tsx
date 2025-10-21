@@ -22,12 +22,24 @@ export const DependentsStep = ({ data, onChange }: DependentsStepProps) => {
   });
 
   const handleAddDependent = () => {
+    // Validate required fields
+    if (!currentDependent.name || !currentDependent.cpf || !currentDependent.rg || 
+        !currentDependent.emissor || !currentDependent.uf || !currentDependent.birthDate || 
+        !currentDependent.sex || !currentDependent.kinship) {
+      alert("Por favor, preencha todos os campos obrigatórios");
+      return;
+    }
+
     if (editingIndex !== null) {
       const updated = [...data.dependents];
       updated[editingIndex] = currentDependent;
       onChange("dependents", updated);
       setEditingIndex(null);
     } else {
+      if (data.dependents.length >= 5) {
+        alert("Limite máximo de 5 dependentes atingido");
+        return;
+      }
       onChange("dependents", [...data.dependents, currentDependent]);
     }
     setCurrentDependent({ name: "", cpf: "", rg: "", emissor: "", uf: "", birthDate: "", sex: "", kinship: "", email: "", isUniversity: false });
@@ -67,11 +79,17 @@ export const DependentsStep = ({ data, onChange }: DependentsStepProps) => {
           </Card>
         ))}
 
-        {!showForm ? (
+        {!showForm && data.dependents.length < 5 && (
           <Button onClick={() => setShowForm(true)} variant="outline" className="w-full">
             <Plus className="h-4 w-4 mr-2" /> Adicionar Dependente
           </Button>
-        ) : (
+        )}
+        
+        {data.dependents.length >= 5 && !showForm && (
+          <p className="text-sm text-muted-foreground text-center">Limite máximo de 5 dependentes atingido</p>
+        )}
+
+        {showForm && (
           <Card className="p-6 space-y-4">
             <div>
               <Label htmlFor="depName">Nome Completo *</Label>
@@ -154,7 +172,7 @@ export const DependentsStep = ({ data, onChange }: DependentsStepProps) => {
             </div>
 
             <div>
-              <Label htmlFor="depKinship">Parentesco *</Label>
+              <Label htmlFor="depKinship">Grau de Parentesco *</Label>
               <Input id="depKinship" value={currentDependent.kinship} onChange={(e) => setCurrentDependent({ ...currentDependent, kinship: e.target.value })} placeholder="Ex: Filho(a), Cônjuge, etc" />
             </div>
 
@@ -165,7 +183,7 @@ export const DependentsStep = ({ data, onChange }: DependentsStepProps) => {
 
             <div className="flex items-center space-x-2">
               <Checkbox id="depUniversity" checked={currentDependent.isUniversity} onCheckedChange={(checked) => setCurrentDependent({ ...currentDependent, isUniversity: checked as boolean })} />
-              <Label htmlFor="depUniversity" className="font-normal cursor-pointer">Estudante universitário</Label>
+              <Label htmlFor="depUniversity" className="font-normal cursor-pointer">Universitário</Label>
             </div>
 
             <div className="flex gap-2">

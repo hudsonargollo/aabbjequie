@@ -7,6 +7,7 @@ import { StickyHeader } from "@/components/StickyHeader";
 import { PersonalDataStep } from "@/components/steps/PersonalDataStep";
 import { ResidentialAddressStep } from "@/components/steps/ResidentialAddressStep";
 import { CommercialAddressStep } from "@/components/steps/CommercialAddressStep";
+import { DependentsStep } from "@/components/steps/DependentsStep";
 import { PaymentStep } from "@/components/steps/PaymentStep";
 import { TermsDialog } from "@/components/TermsDialog";
 import { FormData } from "@/types/form";
@@ -15,7 +16,7 @@ import topoImage from "@/assets/topo.webp";
 import { personalDataSchema, residentialAddressSchema, commercialAddressSchema, paymentSchema } from "@/lib/validations";
 const Index = () => {
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 4;
+  const totalSteps = 5;
   const [loading, setLoading] = useState(false);
   const [showTermsDialog, setShowTermsDialog] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -272,7 +273,8 @@ const Index = () => {
               {currentStep === 1 && <PersonalDataStep data={formData} onChange={handleChange} />}
               {currentStep === 2 && <ResidentialAddressStep data={formData} onChange={handleChange} />}
               {currentStep === 3 && <CommercialAddressStep data={formData} onChange={handleChange} />}
-              {currentStep === 4 && <PaymentStep data={formData} onChange={handleChange} />}
+              {currentStep === 4 && <DependentsStep data={formData} onChange={handleChange} />}
+              {currentStep === 5 && <PaymentStep data={formData} onChange={handleChange} />}
             </div>
 
             {/* Navigation Buttons */}
