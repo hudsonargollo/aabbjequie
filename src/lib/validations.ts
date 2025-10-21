@@ -54,10 +54,10 @@ export const paymentSchema = z.object({
 
 export const dependentSchema = z.object({
   name: z.string().trim().min(3).max(200),
-  cpf: z.string().regex(cpfRegex),
-  rg: z.string().trim().min(5).max(20),
-  emissor: z.string().trim().min(2).max(20),
-  uf: z.string().length(2),
+  cpf: z.string().optional(),
+  rg: z.string().optional(),
+  emissor: z.string().optional(),
+  uf: z.string().optional(),
   birthDate: z.string().refine((date) => {
     const d = new Date(date);
     const now = new Date();
@@ -65,7 +65,7 @@ export const dependentSchema = z.object({
   }),
   sex: z.enum(['M', 'F']),
   kinship: z.string().min(1),
-  email: z.string().email().max(255),
+  email: z.string().email().max(255).optional().or(z.literal("")),
   isUniversity: z.boolean(),
 });
 

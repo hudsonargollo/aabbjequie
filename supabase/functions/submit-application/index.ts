@@ -21,9 +21,11 @@ function generateApplicationHTML(data: any): string {
         <div style="margin: 10px 0; padding: 10px; background: #f9fafb; border-left: 3px solid #1e40af;">
           <strong>Dependente ${index + 1}:</strong><br>
           Nome: ${dep.name}<br>
-          CPF: ${dep.cpf}<br>
-          RG: ${dep.rg}<br>
-          Parentesco: ${dep.kinship}
+          Data de Nascimento: ${dep.birthDate}<br>
+          Sexo: ${dep.sex === 'M' ? 'Masculino' : 'Feminino'}<br>
+          Parentesco: ${dep.kinship}<br>
+          ${dep.email ? `E-mail: ${dep.email}<br>` : ''}
+          ${dep.isUniversity ? 'Universitário: Sim' : ''}
         </div>
       `).join('')}
     `
@@ -130,14 +132,14 @@ const cepRegex = /^\d{5}-?\d{3}$/;
 
 const dependentSchema = z.object({
   name: z.string().trim().min(3).max(200),
-  cpf: z.string().regex(cpfRegex),
-  rg: z.string().trim().min(5).max(20),
-  emissor: z.string().trim().min(2).max(20),
-  uf: z.string().length(2),
+  cpf: z.string().optional(),
+  rg: z.string().optional(),
+  emissor: z.string().optional(),
+  uf: z.string().optional(),
   birthDate: z.string(),
   sex: z.enum(['M', 'F']),
   kinship: z.string().min(1),
-  email: z.string().email().max(255),
+  email: z.string().email().max(255).optional().or(z.literal("")),
   isUniversity: z.boolean(),
 });
 
@@ -313,9 +315,9 @@ Deno.serve(async (req) => {
         pdf.setFontSize(7);
         
         validatedData.dependents.forEach((dep: any, index: number) => {
-          pdf.text(`${index + 1}. ${dep.name}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 });
+          pdf.text(`${index + 1}. ${dep.name} - ${dep.kinship}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 });
           yPos += 3;
-          pdf.text(`CPF: ${dep.cpf}`, xOffset + 5, yPos);
+          pdf.text(`Nasc: ${dep.birthDate} | ${dep.sex === 'M' ? 'M' : 'F'}${dep.isUniversity ? ' | Univ.' : ''}`, xOffset + 5, yPos);
           yPos += 4;
         });
         yPos += 3;

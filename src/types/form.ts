@@ -1,9 +1,9 @@
 export interface Dependent {
   name: string;
-  cpf: string;
-  rg: string;
-  emissor: string;
-  uf: string;
+  cpf?: string;
+  rg?: string;
+  emissor?: string;
+  uf?: string;
   birthDate: string;
   sex: string;
   kinship: string;
