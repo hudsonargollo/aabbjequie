@@ -192,7 +192,15 @@ const Index = () => {
 
             <div className="w-full bg-primary/5 border border-primary/20 rounded-lg p-4">
               <p className="text-sm text-muted-foreground">
-                <strong className="text-primary">Dúvidas?</strong> Entre em contato através do WhatsApp: <span className="font-semibold">{formData.residentialWhatsapp}</span>
+                <strong className="text-primary">Dúvidas?</strong> Entre em contato através do WhatsApp:{" "}
+                <a 
+                  href="https://wa.me/5573988220432" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="font-semibold text-primary hover:underline"
+                >
+                  (73) 98822-0432
+                </a>
               </p>
             </div>
 
