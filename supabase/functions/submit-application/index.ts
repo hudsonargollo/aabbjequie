@@ -271,9 +271,12 @@ Deno.serve(async (req) => {
     const addColumn = (xOffset: number) => {
       let yPos = 15;
       
-      // Add logo at the top
+      // Add logo centered at the top
       try {
-        pdf.addImage(AABB_LOGO_BASE64, 'PNG', xOffset + 5, yPos, 15, 15);
+        const logoWidth = 15;
+        const logoHeight = 15;
+        const logoX = xOffset + (columnWidth - logoWidth) / 2;
+        pdf.addImage(AABB_LOGO_BASE64, 'PNG', logoX, yPos, logoWidth, logoHeight);
       } catch (e) {
         console.log('Could not add logo:', e);
       }
@@ -346,7 +349,7 @@ Deno.serve(async (req) => {
       // Terms
       pdf.setFontSize(10);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('DECLARO E ACEITO', xOffset + 5, yPos);
+      pdf.text('TERMOS E AUTORIZAÇÃO', xOffset + 5, yPos);
       yPos += 5;
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(7);
