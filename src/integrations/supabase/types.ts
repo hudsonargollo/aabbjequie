@@ -32,7 +32,6 @@ export type Database = {
           dependents: Json | null
           due_date: string
           email: string
-          emissor: string
           full_name: string
           has_criminal_record: boolean
           id: string
@@ -50,7 +49,6 @@ export type Database = {
           residential_whatsapp: string
           rg: string
           sex: string
-          uf: string
           user_id: string | null
         }
         Insert: {
@@ -70,7 +68,6 @@ export type Database = {
           dependents?: Json | null
           due_date: string
           email: string
-          emissor: string
           full_name: string
           has_criminal_record?: boolean
           id?: string
@@ -88,7 +85,6 @@ export type Database = {
           residential_whatsapp: string
           rg: string
           sex: string
-          uf: string
           user_id?: string | null
         }
         Update: {
@@ -108,7 +104,6 @@ export type Database = {
           dependents?: Json | null
           due_date?: string
           email?: string
-          emissor?: string
           full_name?: string
           has_criminal_record?: boolean
           id?: string
@@ -126,7 +121,6 @@ export type Database = {
           residential_whatsapp?: string
           rg?: string
           sex?: string
-          uf?: string
           user_id?: string | null
         }
         Relationships: []

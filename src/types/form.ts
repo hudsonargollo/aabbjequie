@@ -19,8 +19,6 @@ export interface FormData {
   civilStatus: string;
   cpf: string;
   rg: string;
-  emissor: string;
-  uf: string;
   email: string;
   
   // Endereço Residencial
