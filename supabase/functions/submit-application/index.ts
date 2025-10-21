@@ -541,7 +541,7 @@ Deno.serve(async (req) => {
     adminPdf.setFontSize(12);
     adminPdf.setFont('helvetica', 'bold');
     adminPdf.text('TERMOS ACEITOS', 20, yPos);
-    yPos += 7;
+    yPos += 10;
     adminPdf.setFont('helvetica', 'normal');
     adminPdf.setFontSize(10);
     
@@ -551,7 +551,7 @@ Deno.serve(async (req) => {
       170
     );
     adminPdf.text(terms1, 20, yPos);
-    yPos += terms1.length * 6 + 5;
+    yPos += (terms1.length * 7) + 5;
     
     // Second term with proper line spacing
     const terms2 = adminPdf.splitTextToSize(
@@ -559,7 +559,7 @@ Deno.serve(async (req) => {
       170
     );
     adminPdf.text(terms2, 20, yPos);
-    yPos += terms2.length * 6 + 10;
+    yPos += (terms2.length * 7) + 10;
     
     // Footer
     adminPdf.setFontSize(9);
