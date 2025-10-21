@@ -351,16 +351,34 @@ Deno.serve(async (req) => {
       pdf.setFont('helvetica', 'bold');
       pdf.text('TERMOS E AUTORIZAÇÃO', xOffset + 5, yPos);
       yPos += 5;
+      
+      // Calculate box height for terms
+      const termsText1 = 'Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO E OUTROS REGULAMENTOS DA AABB).';
+      const termsText2 = 'Autorizo o uso de minha imagem e de meus dependentes em fotos e filmagens com fins não comerciais nas publicações realizadas em eventos produzidos pela Associação.';
+      const splitTerms1 = pdf.splitTextToSize(termsText1, columnWidth - 17);
+      const splitTerms2 = pdf.splitTextToSize(termsText2, columnWidth - 17);
+      const boxHeight = (splitTerms1.length + splitTerms2.length) * 3 + 12;
+      
+      // Draw yellow background box with blue stroke and rounded corners
+      pdf.setFillColor(255, 255, 200, 0.3); // Yellow semi-transparent
+      pdf.setDrawColor(0, 0, 255); // Blue stroke
+      pdf.setLineWidth(0.3);
+      pdf.roundedRect(xOffset + 5, yPos, columnWidth - 10, boxHeight, 2, 2, 'FD');
+      
+      yPos += 3;
+      
+      // First checkbox and text
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(7);
-      const termsText1 = 'Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO E OUTROS REGULAMENTOS DA AABB).';
-      const splitTerms1 = pdf.splitTextToSize(termsText1, columnWidth - 10);
-      pdf.text(splitTerms1, xOffset + 5, yPos);
+      pdf.setDrawColor(0, 0, 0);
+      pdf.setLineWidth(0.2);
+      pdf.rect(xOffset + 7, yPos, 2.5, 2.5); // Checkbox
+      pdf.text(splitTerms1, xOffset + 11, yPos + 2);
       yPos += splitTerms1.length * 3 + 3;
       
-      const termsText2 = 'Autorizo o uso de minha imagem e de meus dependentes em fotos e filmagens com fins não comerciais nas publicações realizadas em eventos produzidos pela Associação.';
-      const splitTerms2 = pdf.splitTextToSize(termsText2, columnWidth - 10);
-      pdf.text(splitTerms2, xOffset + 5, yPos);
+      // Second checkbox and text
+      pdf.rect(xOffset + 7, yPos, 2.5, 2.5); // Checkbox
+      pdf.text(splitTerms2, xOffset + 11, yPos + 2);
       yPos += splitTerms2.length * 3 + 8;
       
       // First Signature
