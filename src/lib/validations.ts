@@ -65,7 +65,7 @@ export const dependentSchema = z.object({
   }),
   sex: z.enum(['M', 'F']),
   kinship: z.string().min(1),
-  email: z.string().email().max(255).optional().or(z.literal("")),
+  email: z.union([z.string().email().max(255), z.literal("")]).optional(),
   isUniversity: z.boolean(),
 });
 
