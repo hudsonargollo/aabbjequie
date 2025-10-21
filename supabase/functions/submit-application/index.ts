@@ -449,7 +449,7 @@ Deno.serve(async (req) => {
     try {
       await resend.emails.send({
         from: "AABB Jequié <cadastro@aabbjequie.online>",
-        to: ["hudsonargollo2@gmail.com"],
+        to: ["hudsonargollo2@gmail.com", "w.aabbjequie@gmail.com"],
         subject: `Nova Inscrição - ${validatedData.fullName}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
