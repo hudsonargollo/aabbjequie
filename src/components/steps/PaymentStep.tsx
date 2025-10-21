@@ -107,35 +107,6 @@ export const PaymentStep = ({ data, onChange }: PaymentStepProps) => {
           </Select>
         </div>
 
-        <div className="border-t pt-6 mt-6">
-          <Label className="text-base font-semibold">Antecedentes Criminais *</Label>
-          <p className="text-sm text-muted-foreground mb-4">
-            Você possui antecedentes criminais?
-          </p>
-          <RadioGroup
-            value={data.hasCriminalRecord ? "sim" : "nao"}
-            onValueChange={(value) => onChange("hasCriminalRecord", value === "sim")}
-            className="flex flex-col gap-3"
-          >
-            <div className="flex items-center space-x-2 border rounded-lg p-3">
-              <RadioGroupItem value="nao" id="no-criminal" />
-              <Label htmlFor="no-criminal" className="font-normal cursor-pointer flex-1">Não</Label>
-            </div>
-            <div className="flex items-center space-x-2 border rounded-lg p-3">
-              <RadioGroupItem value="sim" id="yes-criminal" />
-              <Label htmlFor="yes-criminal" className="font-normal cursor-pointer flex-1">Sim</Label>
-            </div>
-          </RadioGroup>
-
-          {data.hasCriminalRecord && (
-            <Alert variant="destructive" className="mt-4">
-              <AlertTriangle className="h-4 w-4" />
-              <AlertDescription>
-                Infelizmente, não é possível prosseguir com a inscrição caso você possua antecedentes criminais.
-              </AlertDescription>
-            </Alert>
-          )}
-        </div>
       </div>
     </div>
   );

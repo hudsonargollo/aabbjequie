@@ -33,7 +33,6 @@ export type Database = {
           due_date: string
           email: string
           full_name: string
-          has_criminal_record: boolean
           id: string
           last_four_digits: string | null
           monthly_payment_method: string
@@ -69,7 +68,6 @@ export type Database = {
           due_date: string
           email: string
           full_name: string
-          has_criminal_record?: boolean
           id?: string
           last_four_digits?: string | null
           monthly_payment_method: string
@@ -105,7 +103,6 @@ export type Database = {
           due_date?: string
           email?: string
           full_name?: string
-          has_criminal_record?: boolean
           id?: string
           last_four_digits?: string | null
           monthly_payment_method?: string

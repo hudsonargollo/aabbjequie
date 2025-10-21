@@ -170,9 +170,6 @@ const applicationSchema = z.object({
   paymentProcessor: z.string().optional(),
   lastFourDigits: z.string().max(4).optional(),
   dependents: z.array(dependentSchema),
-  hasCriminalRecord: z.boolean().refine(val => val === false, {
-    message: 'Applications from individuals with criminal records are not accepted'
-  }),
   acceptStatute: z.boolean().refine(val => val === true),
   acceptImageUsage: z.boolean().refine(val => val === true),
 });
@@ -191,18 +188,6 @@ Deno.serve(async (req) => {
     // Parse and validate request body
     const body = await req.json();
     const validatedData = applicationSchema.parse(body);
-
-    // Explicit server-side enforcement for criminal record check
-    if (validatedData.hasCriminalRecord === true) {
-      console.log('Application rejected: criminal record detected');
-      return new Response(
-        JSON.stringify({ 
-          error: 'Applications from individuals with criminal records cannot be processed',
-          code: 'CRIMINAL_RECORD_REJECTION'
-        }),
-        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
 
     console.log('Processing anonymous application submission');
 
@@ -238,7 +223,6 @@ Deno.serve(async (req) => {
         payment_processor: validatedData.paymentProcessor || null,
         last_four_digits: validatedData.lastFourDigits || null,
         dependents: validatedData.dependents,
-        has_criminal_record: validatedData.hasCriminalRecord,
         accept_statute: validatedData.acceptStatute,
         accept_image_usage: validatedData.acceptImageUsage,
       })

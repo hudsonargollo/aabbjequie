@@ -47,8 +47,7 @@ const Index = () => {
     lastFourDigits: "",
     dependents: [],
     acceptStatute: false,
-    acceptImageUsage: false,
-    hasCriminalRecord: false
+    acceptImageUsage: false
   });
   const handleChange = (field: keyof FormData, value: any) => {
     setFormData(prev => ({
@@ -228,8 +227,7 @@ const Index = () => {
                   lastFourDigits: "",
                   dependents: [],
                   acceptStatute: false,
-                  acceptImageUsage: false,
-                  hasCriminalRecord: false
+                  acceptImageUsage: false
                 });
                 setCurrentStep(1);
               }}
@@ -276,7 +274,7 @@ const Index = () => {
                 </Button>}
               {currentStep < totalSteps ? <Button onClick={handleNext} className="flex-1 h-14 text-base font-bold uppercase bg-primary text-primary-foreground border-2 border-primary-foreground/20 hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300">
                   CONTINUAR
-                </Button> : <Button onClick={handleSubmitClick} className="flex-1 h-14 text-base font-bold uppercase bg-accent text-accent-foreground border-2 border-accent-foreground/20 hover:bg-accent/90 shadow-lg hover:shadow-xl transition-all duration-300" disabled={formData.hasCriminalRecord}>
+                </Button> : <Button onClick={handleSubmitClick} className="flex-1 h-14 text-base font-bold uppercase bg-accent text-accent-foreground border-2 border-accent-foreground/20 hover:bg-accent/90 shadow-lg hover:shadow-xl transition-all duration-300">
                   ✓ Enviar Inscrição
                 </Button>}
             </div>
