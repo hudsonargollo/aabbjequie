@@ -408,7 +408,7 @@ Deno.serve(async (req) => {
     
     try {
       const emailResult = await resend.emails.send({
-        from: "AABB Jequié <onboarding@resend.dev>",
+        from: "AABB Jequié <cadastro@aabbjequie.online>",
         to: [validatedData.email],
         subject: "Confirmação de Inscrição - AABB Jequié",
         html: `
@@ -445,7 +445,7 @@ Deno.serve(async (req) => {
     // Send email to admin with PDF attachment
     try {
       await resend.emails.send({
-        from: "AABB Jequié <onboarding@resend.dev>",
+        from: "AABB Jequié <cadastro@aabbjequie.online>",
         to: ["hudsonargollo2@gmail.com"],
         subject: `Nova Inscrição - ${validatedData.fullName}`,
         html: `
