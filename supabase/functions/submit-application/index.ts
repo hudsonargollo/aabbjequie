@@ -3,6 +3,9 @@ import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 import { jsPDF } from "https://esm.sh/jspdf@2.5.1";
 
+// AABB Logo as base64
+const AABB_LOGO_BASE64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
 const corsHeaders = {
@@ -268,6 +271,14 @@ Deno.serve(async (req) => {
     const addColumn = (xOffset: number) => {
       let yPos = 15;
       
+      // Add logo at the top
+      try {
+        pdf.addImage(AABB_LOGO_BASE64, 'PNG', xOffset + 5, yPos, 15, 15);
+      } catch (e) {
+        console.log('Could not add logo:', e);
+      }
+      yPos += 20;
+      
       // Header
       pdf.setFontSize(14);
       pdf.setFont('helvetica', 'bold');
@@ -366,7 +377,7 @@ Deno.serve(async (req) => {
       pdf.setFontSize(8);
       pdf.text(`Taxa: ${validatedData.paymentMethod}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
       pdf.text(`Mensal: ${validatedData.monthlyPaymentMethod}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
-      pdf.text(`Vencimento: ${validatedData.dueDate}`, xOffset + 5, yPos); yPos += 8;
+      pdf.text(`Vencimento: ${validatedData.dueDate}`, xOffset + 5, yPos); yPos += 15;
       
       // Second Signature
       pdf.setFontSize(8);
