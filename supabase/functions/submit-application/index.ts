@@ -543,13 +543,23 @@ Deno.serve(async (req) => {
     adminPdf.text('TERMOS ACEITOS', 20, yPos);
     yPos += 7;
     adminPdf.setFont('helvetica', 'normal');
-    adminPdf.setFontSize(9);
-    const terms1 = adminPdf.splitTextToSize('✓ Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO E OUTROS REGULAMENTOS DA AABB).', 170);
+    adminPdf.setFontSize(10);
+    
+    // First term with proper line spacing
+    const terms1 = adminPdf.splitTextToSize(
+      '✓ Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO E OUTROS REGULAMENTOS DA AABB).', 
+      170
+    );
     adminPdf.text(terms1, 20, yPos);
-    yPos += terms1.length * 5 + 3;
-    const terms2 = adminPdf.splitTextToSize('✓ Autorizo o uso de minha imagem e de meus dependentes em fotos e filmagens com fins não comerciais nas publicações realizadas em eventos produzidos pela Associação.', 170);
+    yPos += terms1.length * 6 + 5;
+    
+    // Second term with proper line spacing
+    const terms2 = adminPdf.splitTextToSize(
+      '✓ Autorizo o uso de minha imagem e de meus dependentes em fotos e filmagens com fins não comerciais nas publicações realizadas em eventos produzidos pela Associação.', 
+      170
+    );
     adminPdf.text(terms2, 20, yPos);
-    yPos += terms2.length * 5 + 10;
+    yPos += terms2.length * 6 + 10;
     
     // Footer
     adminPdf.setFontSize(9);
