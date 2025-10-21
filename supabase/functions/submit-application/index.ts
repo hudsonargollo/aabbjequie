@@ -255,38 +255,10 @@ Deno.serve(async (req) => {
     // Generate HTML for email
     const applicationHTML = generateApplicationHTML(data);
     
-    // Send email to user
+    // Send email to user with PDF attachment
     console.log('Attempting to send confirmation email to user:', validatedData.email);
-    try {
-      const emailResult = await resend.emails.send({
-        from: "AABB Jequié <onboarding@resend.dev>",
-        to: [validatedData.email],
-        subject: "Confirmação de Inscrição - AABB Jequié",
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h1 style="color: #1e40af;">Inscrição Recebida com Sucesso!</h1>
-            <p>Olá <strong>${validatedData.fullName}</strong>,</p>
-            <p>Recebemos sua inscrição na AABB Jequié com sucesso!</p>
-            <p><strong>Próximos passos:</strong></p>
-            <ul>
-              <li>Aguarde o recebimento do documento de confirmação</li>
-              <li>Assine no campo indicado como "ASSINATURA DO TITULAR"</li>
-              <li>Leve o documento à sede da AABB Jequié para finalizar o processo</li>
-            </ul>
-            <p>Qualquer dúvida, entre em contato através do WhatsApp: ${validatedData.residentialWhatsapp}</p>
-            <p>Atenciosamente,<br><strong>AABB Jequié</strong></p>
-            <hr>
-            ${applicationHTML}
-          </div>
-        `,
-      });
-      console.log('User email sent successfully:', emailResult);
-    } catch (emailError) {
-      console.error('Error sending user email:', emailError);
-      console.error('Email error details:', JSON.stringify(emailError, null, 2));
-    }
-
-    // Generate PDF receipt with 2-column layout for splitting
+    
+    // Generate PDF for user attachment (same as admin PDF)
     const pdf = new jsPDF();
     const pageWidth = pdf.internal.pageSize.width;
     const pageHeight = pdf.internal.pageSize.height;
@@ -422,7 +394,43 @@ Deno.serve(async (req) => {
     addColumn(columnWidth); // Right column
     
     const pdfBase64 = pdf.output('datauristring').split(',')[1];
+    
+    try {
+      const emailResult = await resend.emails.send({
+        from: "AABB Jequié <onboarding@resend.dev>",
+        to: [validatedData.email],
+        subject: "Confirmação de Inscrição - AABB Jequié",
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h1 style="color: #1e40af;">Inscrição Recebida com Sucesso!</h1>
+            <p>Olá <strong>${validatedData.fullName}</strong>,</p>
+            <p>Recebemos sua inscrição na AABB Jequié com sucesso!</p>
+            <p><strong>Próximos passos:</strong></p>
+            <ul>
+              <li>Imprima o documento em anexo</li>
+              <li>Assine no campo indicado como "ASSINATURA DO TITULAR"</li>
+              <li>Leve o documento à sede da AABB Jequié para finalizar o processo</li>
+            </ul>
+            <p>Qualquer dúvida, entre em contato através do WhatsApp: ${validatedData.residentialWhatsapp}</p>
+            <p>Atenciosamente,<br><strong>AABB Jequié</strong></p>
+          </div>
+        `,
+        attachments: [
+          {
+            filename: `ficha-inscricao-${validatedData.cpf.replace(/\D/g, '')}.pdf`,
+            content: pdfBase64,
+          },
+        ],
+      });
+      console.log('User email sent successfully:', emailResult);
+    } catch (emailError) {
+      console.error('Error sending user email:', emailError);
+      console.error('Email error details:', JSON.stringify(emailError, null, 2));
+      // Don't fail the whole request if user email fails
+    }
 
+    // Send email to admin with PDF attachment (reusing same PDF)
+    // PDF already generated above for user email
     // Send email to admin with PDF attachment
     try {
       await resend.emails.send({

@@ -34,24 +34,11 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!authLoading && !user) {
-      navigate('/auth');
-    }
-  }, [user, authLoading, navigate]);
+  // Removed authentication checks - admin panel is now publicly accessible
 
   useEffect(() => {
-    if (!authLoading && !isAdmin && user) {
-      toast.error('Acesso negado. Você não é um administrador.');
-      navigate('/');
-    }
-  }, [isAdmin, authLoading, user, navigate]);
-
-  useEffect(() => {
-    if (isAdmin) {
-      fetchApplications();
-    }
-  }, [isAdmin]);
+    fetchApplications();
+  }, []);
 
   const fetchApplications = async () => {
     try {
@@ -100,16 +87,12 @@ const AdminDashboard = () => {
     navigate('/auth');
   };
 
-  if (authLoading || loading) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
-  }
-
-  if (!isAdmin) {
-    return null;
   }
 
   return (
