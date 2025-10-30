@@ -90,7 +90,7 @@ export const EditApplicationDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh]">
+      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>Editar Inscrição</DialogTitle>
         </DialogHeader>
@@ -378,7 +378,7 @@ export const EditApplicationDialog = ({
           </Tabs>
         </ScrollArea>
 
-        <div className="flex justify-end gap-2 pt-4 border-t">
+        <div className="flex justify-end gap-2 pt-4 border-t bg-background">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
