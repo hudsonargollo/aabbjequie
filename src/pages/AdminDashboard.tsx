@@ -12,8 +12,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { Printer, Trash2, LogOut, Loader2 } from 'lucide-react';
+import { Printer, Trash2, LogOut, Loader2, Edit } from 'lucide-react';
 import { generateApplicationPDF } from '@/lib/pdfGenerator';
 import aabbLogo from '@/assets/aabb-logo.png';
 import {
@@ -26,6 +28,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { EditApplicationDialog } from '@/components/EditApplicationDialog';
 
 const AdminDashboard = () => {
   const { user, loading: authLoading, isAdmin, signOut } = useAuth();
@@ -33,6 +36,9 @@ const AdminDashboard = () => {
   const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [editApplication, setEditApplication] = useState<any | null>(null);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   // Removed authentication checks - admin panel is now publicly accessible
 
@@ -43,10 +49,21 @@ const AdminDashboard = () => {
   const fetchApplications = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      let query = supabase
         .from('applications')
         .select('*')
         .order('created_at', { ascending: false });
+
+      if (startDate) {
+        query = query.gte('created_at', new Date(startDate).toISOString());
+      }
+      if (endDate) {
+        const endDateTime = new Date(endDate);
+        endDateTime.setHours(23, 59, 59, 999);
+        query = query.lte('created_at', endDateTime.toISOString());
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       setApplications(data || []);
@@ -122,6 +139,32 @@ const AdminDashboard = () => {
             </Button>
           </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div>
+              <Label htmlFor="startDate">Data Inicial</Label>
+              <Input
+                id="startDate"
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="endDate">Data Final</Label>
+              <Input
+                id="endDate"
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </div>
+            <div className="flex items-end">
+              <Button onClick={fetchApplications} className="w-full">
+                Filtrar
+              </Button>
+            </div>
+          </div>
+
           {applications.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               Nenhuma inscrição encontrada
@@ -141,7 +184,11 @@ const AdminDashboard = () => {
                 </TableHeader>
                 <TableBody>
                   {applications.map((app) => (
-                    <TableRow key={app.id}>
+                    <TableRow 
+                      key={app.id}
+                      className="cursor-pointer hover:bg-muted/50"
+                      onClick={() => setEditApplication(app)}
+                    >
                       <TableCell className="font-medium">{app.full_name}</TableCell>
                       <TableCell>{app.cpf}</TableCell>
                       <TableCell>{app.email}</TableCell>
@@ -149,8 +196,15 @@ const AdminDashboard = () => {
                       <TableCell>
                         {new Date(app.created_at).toLocaleDateString('pt-BR')}
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                         <div className="flex justify-end gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setEditApplication(app)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
                           <Button
                             size="sm"
                             variant="outline"
@@ -192,6 +246,15 @@ const AdminDashboard = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {editApplication && (
+        <EditApplicationDialog
+          application={editApplication}
+          open={!!editApplication}
+          onOpenChange={(open) => !open && setEditApplication(null)}
+          onSuccess={fetchApplications}
+        />
+      )}
     </div>
   );
 };
