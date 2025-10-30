@@ -108,30 +108,31 @@ export const CommercialAddressStep = ({ data, onChange }: CommercialAddressStepP
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="commercialNeighborhood">Bairro</Label>
-            <Select
-              value={data.commercialNeighborhood}
-              onValueChange={(value) => onChange('commercialNeighborhood', value)}
-              disabled={sameAsResidential || skipCommercial}
-            >
-              <SelectTrigger className="mt-1">
-                <SelectValue placeholder="Selecione o bairro" />
-              </SelectTrigger>
-              <SelectContent>
-                {jequieNeighborhoods.map((neighborhood) => (
-                  <SelectItem key={neighborhood} value={neighborhood}>
-                    {neighborhood}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {data.commercialNeighborhood === "Outro" && !sameAsResidential && !skipCommercial && (
+            {data.commercialNeighborhood === "Outro" && !sameAsResidential && !skipCommercial ? (
               <Input
                 value={data.commercialNeighborhood === "Outro" ? "" : data.commercialNeighborhood}
                 onChange={(e) => onChange('commercialNeighborhood', e.target.value)}
                 placeholder="Digite o bairro"
-                className="mt-2"
+                className="mt-1"
                 disabled={sameAsResidential || skipCommercial}
               />
+            ) : (
+              <Select
+                value={data.commercialNeighborhood}
+                onValueChange={(value) => onChange('commercialNeighborhood', value)}
+                disabled={sameAsResidential || skipCommercial}
+              >
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Selecione o bairro" />
+                </SelectTrigger>
+                <SelectContent>
+                  {jequieNeighborhoods.map((neighborhood) => (
+                    <SelectItem key={neighborhood} value={neighborhood}>
+                      {neighborhood}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             )}
           </div>
 

@@ -100,28 +100,29 @@ export const ResidentialAddressStep = ({ data, onChange }: ResidentialAddressSte
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="residentialNeighborhood">Bairro *</Label>
-            <Select
-              value={data.residentialNeighborhood}
-              onValueChange={(value) => onChange('residentialNeighborhood', value)}
-            >
-              <SelectTrigger className="mt-1">
-                <SelectValue placeholder="Selecione o bairro" />
-              </SelectTrigger>
-              <SelectContent>
-                {jequieNeighborhoods.map((neighborhood) => (
-                  <SelectItem key={neighborhood} value={neighborhood}>
-                    {neighborhood}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {data.residentialNeighborhood === "Outro" && (
+            {data.residentialNeighborhood === "Outro" ? (
               <Input
                 value={data.residentialNeighborhood === "Outro" ? "" : data.residentialNeighborhood}
                 onChange={(e) => onChange('residentialNeighborhood', e.target.value)}
                 placeholder="Digite o bairro"
-                className="mt-2"
+                className="mt-1"
               />
+            ) : (
+              <Select
+                value={data.residentialNeighborhood}
+                onValueChange={(value) => onChange('residentialNeighborhood', value)}
+              >
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Selecione o bairro" />
+                </SelectTrigger>
+                <SelectContent>
+                  {jequieNeighborhoods.map((neighborhood) => (
+                    <SelectItem key={neighborhood} value={neighborhood}>
+                      {neighborhood}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             )}
           </div>
         </div>
