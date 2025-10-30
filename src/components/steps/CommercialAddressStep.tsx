@@ -120,7 +120,7 @@ export const CommercialAddressStep = ({ data, onChange }: CommercialAddressStepP
                 }}
                 disabled={sameAsResidential || skipCommercial}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Selecione o bairro" />
                 </SelectTrigger>
                 <SelectContent>
@@ -137,6 +137,7 @@ export const CommercialAddressStep = ({ data, onChange }: CommercialAddressStepP
                   onChange={(e) => onChange('commercialNeighborhood', e.target.value)}
                   placeholder="Digite o bairro"
                   disabled={sameAsResidential || skipCommercial}
+                  className="w-full"
                 />
               )}
             </div>

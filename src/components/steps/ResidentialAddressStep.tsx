@@ -111,7 +111,7 @@ export const ResidentialAddressStep = ({ data, onChange }: ResidentialAddressSte
                   }
                 }}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Selecione o bairro" />
                 </SelectTrigger>
                 <SelectContent>
@@ -127,6 +127,7 @@ export const ResidentialAddressStep = ({ data, onChange }: ResidentialAddressSte
                   value={data.residentialNeighborhood}
                   onChange={(e) => onChange('residentialNeighborhood', e.target.value)}
                   placeholder="Digite o bairro"
+                  className="w-full"
                 />
               )}
             </div>
