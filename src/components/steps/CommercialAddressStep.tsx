@@ -124,6 +124,15 @@ export const CommercialAddressStep = ({ data, onChange }: CommercialAddressStepP
                 ))}
               </SelectContent>
             </Select>
+            {data.commercialNeighborhood === "Outro" && !sameAsResidential && !skipCommercial && (
+              <Input
+                value={data.commercialNeighborhood === "Outro" ? "" : data.commercialNeighborhood}
+                onChange={(e) => onChange('commercialNeighborhood', e.target.value)}
+                placeholder="Digite o bairro"
+                className="mt-2"
+                disabled={sameAsResidential || skipCommercial}
+              />
+            )}
           </div>
 
           <div>

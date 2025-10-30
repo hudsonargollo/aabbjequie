@@ -114,9 +114,17 @@ export const ResidentialAddressStep = ({ data, onChange }: ResidentialAddressSte
                   </SelectItem>
                 ))}
               </SelectContent>
-          </Select>
+            </Select>
+            {data.residentialNeighborhood === "Outro" && (
+              <Input
+                value={data.residentialNeighborhood === "Outro" ? "" : data.residentialNeighborhood}
+                onChange={(e) => onChange('residentialNeighborhood', e.target.value)}
+                placeholder="Digite o bairro"
+                className="mt-2"
+              />
+            )}
+          </div>
         </div>
-      </div>
       <div>
         <Label htmlFor="residentialCity">Cidade *</Label>
         <Input

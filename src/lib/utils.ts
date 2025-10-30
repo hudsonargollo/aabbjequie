@@ -44,4 +44,5 @@ export const jequieNeighborhoods = [
   "São Judas Tadeu",
   "São Luiz",
   "Vila Lígia",
+  "Outro",
 ];
