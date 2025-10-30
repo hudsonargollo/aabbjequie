@@ -17,6 +17,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import { formatCPF } from '@/lib/utils';
+import { DependentsStep } from '@/components/steps/DependentsStep';
 
 interface EditApplicationDialogProps {
   application: any;
@@ -96,10 +97,11 @@ export const EditApplicationDialog = ({
         
         <ScrollArea className="h-[calc(90vh-120px)] pr-4">
           <Tabs defaultValue="personal" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="personal">Pessoal</TabsTrigger>
               <TabsTrigger value="residential">Residencial</TabsTrigger>
               <TabsTrigger value="commercial">Comercial</TabsTrigger>
+              <TabsTrigger value="dependents">Dependentes</TabsTrigger>
               <TabsTrigger value="payment">Pagamento</TabsTrigger>
             </TabsList>
 
@@ -300,6 +302,13 @@ export const EditApplicationDialog = ({
                   />
                 </div>
               </div>
+            </TabsContent>
+
+            <TabsContent value="dependents" className="space-y-4 mt-4">
+              <DependentsStep
+                data={formData}
+                onChange={handleChange}
+              />
             </TabsContent>
 
             <TabsContent value="payment" className="space-y-4 mt-4">
