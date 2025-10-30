@@ -108,7 +108,7 @@ export const generateApplicationPDF = (application: ApplicationData) => {
     yPos += 5;
     pdf.setFont('helvetica', 'normal');
     pdf.setFontSize(7);
-    const termsText1 = 'Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO E OUTROS REGULAMENTOS DA AABB).';
+    const termsText1 = 'Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO INTERNO E OUTROS REGULAMENTOS DA AABB).';
     const splitTerms1 = pdf.splitTextToSize(termsText1, columnWidth - 10);
     pdf.text(splitTerms1, xOffset + 5, yPos);
     yPos += splitTerms1.length * 3 + 3;

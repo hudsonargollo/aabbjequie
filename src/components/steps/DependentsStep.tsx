@@ -98,7 +98,7 @@ export const DependentsStep = ({ data, onChange }: DependentsStepProps) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="depBirthDate">Data de Nascimento *</Label>
-                <Input id="depBirthDate" type="date" value={currentDependent.birthDate} onChange={(e) => setCurrentDependent({ ...currentDependent, birthDate: e.target.value })} />
+                <Input id="depBirthDate" type="date" value={currentDependent.birthDate} onChange={(e) => setCurrentDependent({ ...currentDependent, birthDate: e.target.value })} placeholder="dd/mm/aaaa" />
               </div>
               <div>
                 <Label>Sexo *</Label>

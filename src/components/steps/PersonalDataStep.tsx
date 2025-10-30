@@ -27,7 +27,7 @@ export const PersonalDataStep = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="birthDate">Data de Nascimento *</Label>
-            <Input id="birthDate" type="date" value={data.birthDate} onChange={e => onChange("birthDate", e.target.value)} className="mt-1" />
+            <Input id="birthDate" type="date" value={data.birthDate} onChange={e => onChange("birthDate", e.target.value)} className="mt-1" placeholder="dd/mm/aaaa" />
           </div>
 
           <div>

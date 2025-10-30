@@ -50,24 +50,24 @@ export const TermsDialog = ({ open, onOpenChange, onConfirm, loading }: TermsDia
 
         <div className="space-y-6 py-4">
           <div className="space-y-4">
-            <div className="flex items-start space-x-3">
+            <div className="flex items-start space-x-3 p-3 border border-border rounded-md bg-muted/20">
               <Checkbox
                 id="statute"
                 checked={acceptStatute}
                 onCheckedChange={(checked) => setAcceptStatute(checked as boolean)}
-                className="mt-1"
+                className="mt-1 flex-shrink-0"
               />
               <Label htmlFor="statute" className="font-normal cursor-pointer leading-relaxed text-sm">
-                Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO E OUTROS REGULAMENTOS DA AABB).
+                Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO INTERNO E OUTROS REGULAMENTOS DA AABB).
               </Label>
             </div>
 
-            <div className="flex items-start space-x-3">
+            <div className="flex items-start space-x-3 p-3 border border-border rounded-md bg-muted/20">
               <Checkbox
                 id="imageUsage"
                 checked={acceptImageUsage}
                 onCheckedChange={(checked) => setAcceptImageUsage(checked as boolean)}
-                className="mt-1"
+                className="mt-1 flex-shrink-0"
               />
               <Label htmlFor="imageUsage" className="font-normal cursor-pointer leading-relaxed text-sm">
                 Autorizo o uso de minha imagem e de meus dependentes em fotos e filmagens com fins não comerciais nas publicações realizadas em eventos produzidos pela Associação em suas dependências, sejam eles culturais/esportivos...

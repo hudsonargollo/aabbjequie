@@ -16,28 +16,28 @@ export const TermsStep = ({ data, onChange }: TermsStepProps) => {
       </div>
 
       <div className="space-y-6 bg-muted/30 p-6 rounded-lg">
-        <div className="space-y-3">
-          <div className="flex items-start space-x-3">
+        <div className="space-y-4">
+          <div className="flex items-start space-x-3 p-3 border border-border rounded-md bg-background">
             <Checkbox 
               id="acceptStatute" 
               checked={data.acceptStatute} 
               onCheckedChange={(checked) => onChange("acceptStatute", checked as boolean)}
-              className="mt-1"
+              className="mt-1 flex-shrink-0"
             />
-            <Label htmlFor="acceptStatute" className="font-normal cursor-pointer leading-relaxed">
+            <Label htmlFor="acceptStatute" className="font-normal cursor-pointer leading-relaxed text-sm">
               Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes 
-              (ESTATUTO/ REGIMENTO E OUTROS REGULAMENTOS DA AABB). *
+              (ESTATUTO/ REGIMENTO INTERNO E OUTROS REGULAMENTOS DA AABB). *
             </Label>
           </div>
 
-          <div className="flex items-start space-x-3">
+          <div className="flex items-start space-x-3 p-3 border border-border rounded-md bg-background">
             <Checkbox 
               id="acceptImageUsage" 
               checked={data.acceptImageUsage} 
               onCheckedChange={(checked) => onChange("acceptImageUsage", checked as boolean)}
-              className="mt-1"
+              className="mt-1 flex-shrink-0"
             />
-            <Label htmlFor="acceptImageUsage" className="font-normal cursor-pointer leading-relaxed">
+            <Label htmlFor="acceptImageUsage" className="font-normal cursor-pointer leading-relaxed text-sm">
               Autorizo a utilização da minha imagem e/ou dos meus dependentes em fotografias e 
               vídeos realizados nas dependências da AABB Jequié para fins de divulgação institucional 
               em materiais impressos e digitais. *
