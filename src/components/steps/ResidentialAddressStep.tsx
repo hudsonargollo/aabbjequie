@@ -97,12 +97,12 @@ export const ResidentialAddressStep = ({ data, onChange }: ResidentialAddressSte
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-4">
           <div>
             <Label htmlFor="residentialNeighborhood">Bairro *</Label>
-            <div className="flex gap-2 mt-1">
+            <div className={`grid gap-4 mt-1 ${data.residentialNeighborhood && !jequieNeighborhoods.includes(data.residentialNeighborhood) ? 'grid-cols-2' : 'grid-cols-1'}`}>
               <Select
-                value={data.residentialNeighborhood === "Outro" ? "Outro" : data.residentialNeighborhood}
+                value={data.residentialNeighborhood && jequieNeighborhoods.includes(data.residentialNeighborhood) ? data.residentialNeighborhood : "Outro"}
                 onValueChange={(value) => {
                   if (value === "Outro") {
                     onChange('residentialNeighborhood', '');
@@ -111,7 +111,7 @@ export const ResidentialAddressStep = ({ data, onChange }: ResidentialAddressSte
                   }
                 }}
               >
-                <SelectTrigger className={data.residentialNeighborhood && data.residentialNeighborhood !== "Outro" && !jequieNeighborhoods.includes(data.residentialNeighborhood) ? "flex-1" : ""}>
+                <SelectTrigger>
                   <SelectValue placeholder="Selecione o bairro" />
                 </SelectTrigger>
                 <SelectContent>
@@ -127,7 +127,6 @@ export const ResidentialAddressStep = ({ data, onChange }: ResidentialAddressSte
                   value={data.residentialNeighborhood}
                   onChange={(e) => onChange('residentialNeighborhood', e.target.value)}
                   placeholder="Digite o bairro"
-                  className="flex-1"
                 />
               )}
             </div>
