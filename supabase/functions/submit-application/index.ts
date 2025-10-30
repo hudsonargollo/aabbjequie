@@ -404,15 +404,13 @@ Deno.serve(async (req) => {
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h1 style="color: #1e40af;">Inscrição Recebida com Sucesso!</h1>
             <p>Olá <strong>${validatedData.fullName}</strong>,</p>
-            <p>Recebemos sua inscrição na AABB Jequié com sucesso!</p>
+            <p>Recebemos sua inscrição na janela de adesão AABB Jequié com sucesso!</p>
             <p><strong>Próximos passos:</strong></p>
             <ul>
-              <li>Imprima o documento em anexo</li>
-              <li>Assine no campo indicado como "ASSINATURA DO TITULAR"</li>
-              <li>Leve o documento à sede da AABB Jequié para finalizar o processo</li>
+              <li>Compareça à sede da AABB Jequié na data informada com os documentos originais em mãos.</li>
             </ul>
-            <p>Qualquer dúvida, entre em contato através do WhatsApp: ${validatedData.residentialWhatsapp}</p>
-            <p>Atenciosamente,<br><strong>AABB Jequié</strong></p>
+            <p style="margin-top: 10px;"><strong>OBS:</strong> O preenchimento deste formulário não garante a sua vaga. As vagas serão preenchidas de acordo ordem de chegada e o número de vagas é limitado, podendo encerrar a janela de adesão antes da data determinada.</p>
+            <p style="margin-top: 20px;">Atenciosamente,<br><strong>AABB Jequié</strong></p>
           </div>
         `,
         attachments: [
