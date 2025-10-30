@@ -108,21 +108,19 @@ export const CommercialAddressStep = ({ data, onChange }: CommercialAddressStepP
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="commercialNeighborhood">Bairro</Label>
-            {data.commercialNeighborhood === "Outro" && !sameAsResidential && !skipCommercial ? (
-              <Input
-                value={data.commercialNeighborhood === "Outro" ? "" : data.commercialNeighborhood}
-                onChange={(e) => onChange('commercialNeighborhood', e.target.value)}
-                placeholder="Digite o bairro"
-                className="mt-1"
-                disabled={sameAsResidential || skipCommercial}
-              />
-            ) : (
+            <div className="flex gap-2 mt-1">
               <Select
-                value={data.commercialNeighborhood}
-                onValueChange={(value) => onChange('commercialNeighborhood', value)}
+                value={data.commercialNeighborhood === "Outro" ? "Outro" : data.commercialNeighborhood}
+                onValueChange={(value) => {
+                  if (value === "Outro") {
+                    onChange('commercialNeighborhood', '');
+                  } else {
+                    onChange('commercialNeighborhood', value);
+                  }
+                }}
                 disabled={sameAsResidential || skipCommercial}
               >
-                <SelectTrigger className="mt-1">
+                <SelectTrigger className={data.commercialNeighborhood && data.commercialNeighborhood !== "Outro" && !jequieNeighborhoods.includes(data.commercialNeighborhood) ? "flex-1" : ""}>
                   <SelectValue placeholder="Selecione o bairro" />
                 </SelectTrigger>
                 <SelectContent>
@@ -133,7 +131,16 @@ export const CommercialAddressStep = ({ data, onChange }: CommercialAddressStepP
                   ))}
                 </SelectContent>
               </Select>
-            )}
+              {data.commercialNeighborhood && !jequieNeighborhoods.includes(data.commercialNeighborhood) && !sameAsResidential && !skipCommercial && (
+                <Input
+                  value={data.commercialNeighborhood}
+                  onChange={(e) => onChange('commercialNeighborhood', e.target.value)}
+                  placeholder="Digite o bairro"
+                  className="flex-1"
+                  disabled={sameAsResidential || skipCommercial}
+                />
+              )}
+            </div>
           </div>
 
           <div>

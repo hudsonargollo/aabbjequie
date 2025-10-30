@@ -100,19 +100,18 @@ export const ResidentialAddressStep = ({ data, onChange }: ResidentialAddressSte
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="residentialNeighborhood">Bairro *</Label>
-            {data.residentialNeighborhood === "Outro" ? (
-              <Input
-                value={data.residentialNeighborhood === "Outro" ? "" : data.residentialNeighborhood}
-                onChange={(e) => onChange('residentialNeighborhood', e.target.value)}
-                placeholder="Digite o bairro"
-                className="mt-1"
-              />
-            ) : (
+            <div className="flex gap-2 mt-1">
               <Select
-                value={data.residentialNeighborhood}
-                onValueChange={(value) => onChange('residentialNeighborhood', value)}
+                value={data.residentialNeighborhood === "Outro" ? "Outro" : data.residentialNeighborhood}
+                onValueChange={(value) => {
+                  if (value === "Outro") {
+                    onChange('residentialNeighborhood', '');
+                  } else {
+                    onChange('residentialNeighborhood', value);
+                  }
+                }}
               >
-                <SelectTrigger className="mt-1">
+                <SelectTrigger className={data.residentialNeighborhood && data.residentialNeighborhood !== "Outro" && !jequieNeighborhoods.includes(data.residentialNeighborhood) ? "flex-1" : ""}>
                   <SelectValue placeholder="Selecione o bairro" />
                 </SelectTrigger>
                 <SelectContent>
@@ -123,7 +122,15 @@ export const ResidentialAddressStep = ({ data, onChange }: ResidentialAddressSte
                   ))}
                 </SelectContent>
               </Select>
-            )}
+              {data.residentialNeighborhood && !jequieNeighborhoods.includes(data.residentialNeighborhood) && (
+                <Input
+                  value={data.residentialNeighborhood}
+                  onChange={(e) => onChange('residentialNeighborhood', e.target.value)}
+                  placeholder="Digite o bairro"
+                  className="flex-1"
+                />
+              )}
+            </div>
           </div>
         </div>
       <div>
