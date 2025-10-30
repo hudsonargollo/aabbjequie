@@ -100,7 +100,7 @@ export const ResidentialAddressStep = ({ data, onChange }: ResidentialAddressSte
         <div className="space-y-4">
           <div>
             <Label htmlFor="residentialNeighborhood">Bairro *</Label>
-            <div className={`grid gap-4 mt-1 ${data.residentialNeighborhood && !jequieNeighborhoods.includes(data.residentialNeighborhood) ? 'grid-cols-2' : 'grid-cols-1'}`}>
+            <div className={`grid gap-4 mt-1 ${!jequieNeighborhoods.includes(data.residentialNeighborhood) || data.residentialNeighborhood === '' ? 'grid-cols-2' : 'grid-cols-1'}`}>
               <Select
                 value={data.residentialNeighborhood && jequieNeighborhoods.includes(data.residentialNeighborhood) ? data.residentialNeighborhood : "Outro"}
                 onValueChange={(value) => {
@@ -122,7 +122,7 @@ export const ResidentialAddressStep = ({ data, onChange }: ResidentialAddressSte
                   ))}
                 </SelectContent>
               </Select>
-              {data.residentialNeighborhood && !jequieNeighborhoods.includes(data.residentialNeighborhood) && (
+              {(!jequieNeighborhoods.includes(data.residentialNeighborhood) || data.residentialNeighborhood === '') && (
                 <Input
                   value={data.residentialNeighborhood}
                   onChange={(e) => onChange('residentialNeighborhood', e.target.value)}
