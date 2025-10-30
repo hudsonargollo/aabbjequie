@@ -101,7 +101,7 @@ function generateApplicationHTML(data: any): string {
 
       <div class="signature-section">
         <div class="terms">
-          <p><strong>Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO E OUTROS REGULAMENTOS DA AABB).</strong></p>
+          <p><strong>Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO INTERNO E OUTROS REGULAMENTOS DA AABB).</strong></p>
           <p><strong>Autorizo o uso de minha imagem e de meus dependentes em fotos e filmagens com fins não comerciais nas publicações realizadas em eventos produzidos pela Associação em suas dependências, sejam eles culturais/esportivos.</strong></p>
         </div>
 
@@ -330,7 +330,7 @@ Deno.serve(async (req) => {
       yPos += 5;
       
       // Terms text without box
-      const termsText1 = 'Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO E OUTROS REGULAMENTOS DA AABB).';
+      const termsText1 = 'Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO INTERNO E OUTROS REGULAMENTOS DA AABB).';
       const termsText2 = 'Autorizo o uso de minha imagem e de meus dependentes em fotos e filmagens com fins não comerciais nas publicações realizadas em eventos produzidos pela Associação.';
       const splitTerms1 = pdf.splitTextToSize(termsText1, columnWidth - 15);
       const splitTerms2 = pdf.splitTextToSize(termsText2, columnWidth - 15);
@@ -524,13 +524,15 @@ Deno.serve(async (req) => {
         adminPdf.text(`Dependente ${index + 1}:`, 20, yPos); yPos += 6;
         adminPdf.setFont('helvetica', 'normal');
         adminPdf.text(`Nome: ${dep.name}`, 25, yPos); yPos += 6;
-        adminPdf.text(`CPF: ${dep.cpf}`, 25, yPos); yPos += 6;
-        adminPdf.text(`RG: ${dep.rg}`, 25, yPos); yPos += 6;
-        adminPdf.text(`Emissor: ${dep.emissor} - ${dep.uf}`, 25, yPos); yPos += 6;
+        adminPdf.text(`CPF: ${dep.cpf || 'Não informado'}`, 25, yPos); yPos += 6;
+        adminPdf.text(`RG: ${dep.rg || 'Não informado'}`, 25, yPos); yPos += 6;
+        if (dep.emissor || dep.uf) {
+          adminPdf.text(`Emissor: ${dep.emissor || ''} - ${dep.uf || ''}`, 25, yPos); yPos += 6;
+        }
         adminPdf.text(`Data de Nascimento: ${dep.birthDate}`, 25, yPos); yPos += 6;
         adminPdf.text(`Sexo: ${dep.sex === 'M' ? 'Masculino' : 'Feminino'}`, 25, yPos); yPos += 6;
         adminPdf.text(`Parentesco: ${dep.kinship}`, 25, yPos); yPos += 6;
-        adminPdf.text(`E-mail: ${dep.email}`, 25, yPos); yPos += 6;
+        adminPdf.text(`E-mail: ${dep.email || 'Não informado'}`, 25, yPos); yPos += 6;
         adminPdf.text(`Universitário: ${dep.isUniversity ? 'Sim' : 'Não'}`, 25, yPos); yPos += 8;
       });
     }
@@ -547,21 +549,27 @@ Deno.serve(async (req) => {
     adminPdf.setFont('helvetica', 'normal');
     adminPdf.setFontSize(10);
     
-    // First term with proper line spacing
+    // First term with checkbox
+    adminPdf.setDrawColor(0, 0, 0);
+    adminPdf.setLineWidth(0.3);
+    adminPdf.rect(20, yPos - 3, 4, 4);
+    adminPdf.text('✓', 21, yPos + 1);
     const terms1 = adminPdf.splitTextToSize(
-      '✓ Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO E OUTROS REGULAMENTOS DA AABB).', 
-      170
+      'Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO INTERNO E OUTROS REGULAMENTOS DA AABB).', 
+      165
     );
-    adminPdf.text(terms1, 20, yPos);
-    yPos += (terms1.length * 7) + 5;
+    adminPdf.text(terms1, 27, yPos);
+    yPos += (terms1.length * 6) + 5;
     
-    // Second term with proper line spacing
+    // Second term with checkbox
+    adminPdf.rect(20, yPos - 3, 4, 4);
+    adminPdf.text('✓', 21, yPos + 1);
     const terms2 = adminPdf.splitTextToSize(
-      '✓ Autorizo o uso de minha imagem e de meus dependentes em fotos e filmagens com fins não comerciais nas publicações realizadas em eventos produzidos pela Associação.', 
-      170
+      'Autorizo o uso de minha imagem e de meus dependentes em fotos e filmagens com fins não comerciais nas publicações realizadas em eventos produzidos pela Associação em suas dependências, sejam eles culturais/esportivos.', 
+      165
     );
-    adminPdf.text(terms2, 20, yPos);
-    yPos += (terms2.length * 7) + 10;
+    adminPdf.text(terms2, 27, yPos);
+    yPos += (terms2.length * 6) + 10;
     
     // Footer
     adminPdf.setFontSize(9);
