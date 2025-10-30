@@ -241,193 +241,9 @@ Deno.serve(async (req) => {
 
     console.log(`Application ${data.id} created successfully`);
 
-    // Generate HTML for email
-    const applicationHTML = generateApplicationHTML(data);
+    // Generate comprehensive PDF for user and admin
+    console.log('Generating comprehensive PDF...');
     
-    // Send email to user with PDF attachment
-    console.log('Attempting to send confirmation email to user:', validatedData.email);
-    
-    // Generate PDF for user attachment (same as admin PDF)
-    const pdf = new jsPDF();
-    const pageWidth = pdf.internal.pageSize.width;
-    const pageHeight = pdf.internal.pageSize.height;
-    const columnWidth = pageWidth / 2;
-    
-    // Function to add content to one column
-    const addColumn = (xOffset: number) => {
-      let yPos = 15;
-      
-      // Logo removed per user request
-      
-      // Header
-      pdf.setFontSize(14);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('FICHA DE INSCRIÇÃO', xOffset + columnWidth / 2, yPos, { align: 'center' });
-      yPos += 7;
-      pdf.setFontSize(12);
-      pdf.text('AABB Jequié', xOffset + columnWidth / 2, yPos, { align: 'center' });
-      yPos += 10;
-      
-      // Personal Data
-      pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('DADOS PESSOAIS', xOffset + 5, yPos);
-      yPos += 5;
-      pdf.setFont('helvetica', 'normal');
-      pdf.setFontSize(8);
-      pdf.text(`Nome: ${validatedData.fullName}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
-      pdf.text(`CPF: ${validatedData.cpf}`, xOffset + 5, yPos); yPos += 4;
-      pdf.text(`RG: ${validatedData.rg}`, xOffset + 5, yPos); yPos += 4;
-      pdf.text(`Nasc: ${validatedData.birthDate}`, xOffset + 5, yPos); yPos += 4;
-      pdf.text(`Sexo: ${validatedData.sex === 'M' ? 'M' : 'F'}`, xOffset + 5, yPos); yPos += 4;
-      pdf.text(`Est. Civil: ${validatedData.civilStatus}`, xOffset + 5, yPos); yPos += 6;
-      
-      // Residential Address
-      pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('ENDEREÇO RESIDENCIAL', xOffset + 5, yPos);
-      yPos += 5;
-      pdf.setFont('helvetica', 'normal');
-      pdf.setFontSize(8);
-      pdf.text(`${validatedData.residentialStreet}, ${validatedData.residentialNumber}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
-      pdf.text(`${validatedData.residentialNeighborhood} - ${validatedData.residentialCity}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
-      pdf.text(`CEP: ${validatedData.residentialCep}`, xOffset + 5, yPos); yPos += 4;
-      pdf.text(`WhatsApp: ${validatedData.residentialWhatsapp}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 6;
-      
-      // Commercial Address
-      pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('ENDEREÇO COMERCIAL', xOffset + 5, yPos);
-      yPos += 5;
-      pdf.setFont('helvetica', 'normal');
-      pdf.setFontSize(8);
-      pdf.text(`${validatedData.commercialStreet}, ${validatedData.commercialNumber}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
-      pdf.text(`${validatedData.commercialNeighborhood} - ${validatedData.commercialCity}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
-      pdf.text(`CEP: ${validatedData.commercialCep}`, xOffset + 5, yPos); yPos += 6;
-      
-      // Dependents
-      if (validatedData.dependents && validatedData.dependents.length > 0) {
-        pdf.setFontSize(10);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('DEPENDENTES', xOffset + 5, yPos);
-        yPos += 5;
-        pdf.setFont('helvetica', 'normal');
-        pdf.setFontSize(7);
-        
-        validatedData.dependents.forEach((dep: any, index: number) => {
-          pdf.text(`${index + 1}. ${dep.name} - ${dep.kinship}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 });
-          yPos += 3;
-          pdf.text(`Nasc: ${dep.birthDate} | ${dep.sex === 'M' ? 'M' : 'F'}${dep.isUniversity ? ' | Univ.' : ''}`, xOffset + 5, yPos);
-          yPos += 4;
-        });
-        yPos += 3;
-      }
-      
-      // Terms
-      pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('TERMOS E AUTORIZAÇÃO', xOffset + 5, yPos);
-      yPos += 5;
-      
-      // Terms text without box
-      const termsText1 = 'Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO INTERNO E OUTROS REGULAMENTOS DA AABB).';
-      const termsText2 = 'Autorizo o uso de minha imagem e de meus dependentes em fotos e filmagens com fins não comerciais nas publicações realizadas em eventos produzidos pela Associação.';
-      const splitTerms1 = pdf.splitTextToSize(termsText1, columnWidth - 15);
-      const splitTerms2 = pdf.splitTextToSize(termsText2, columnWidth - 15);
-      
-      // First checkbox and text
-      pdf.setFont('helvetica', 'normal');
-      pdf.setFontSize(7);
-      pdf.setDrawColor(0, 0, 0);
-      pdf.setLineWidth(0.2);
-      pdf.rect(xOffset + 7, yPos, 2.5, 2.5); // Checkbox
-      pdf.text(splitTerms1, xOffset + 11, yPos + 2);
-      yPos += splitTerms1.length * 3 + 3;
-      
-      // Second checkbox and text
-      pdf.rect(xOffset + 7, yPos, 2.5, 2.5); // Checkbox
-      pdf.text(splitTerms2, xOffset + 11, yPos + 2);
-      yPos += splitTerms2.length * 3 + 8;
-      
-      // First Signature
-      pdf.setFontSize(8);
-      pdf.line(xOffset + 10, yPos, xOffset + columnWidth - 10, yPos);
-      yPos += 4;
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('ASSINATURA DO TITULAR', xOffset + columnWidth / 2, yPos, { align: 'center' });
-      yPos += 8;
-      
-      // Payment Info
-      pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('PAGAMENTO', xOffset + 5, yPos);
-      yPos += 5;
-      pdf.setFont('helvetica', 'normal');
-      pdf.setFontSize(8);
-      pdf.text(`Taxa: ${validatedData.paymentMethod}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
-      pdf.text(`Mensal: ${validatedData.monthlyPaymentMethod}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
-      pdf.text(`Vencimento: ${validatedData.dueDate}`, xOffset + 5, yPos); yPos += 15;
-      
-      // Second Signature
-      pdf.setFontSize(8);
-      pdf.line(xOffset + 10, yPos, xOffset + columnWidth - 10, yPos);
-      yPos += 4;
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('ASSINATURA DO TITULAR', xOffset + columnWidth / 2, yPos, { align: 'center' });
-      yPos += 8;
-      
-      // Date
-      pdf.setFontSize(7);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, xOffset + 5, yPos);
-    };
-    
-    // Add both columns
-    addColumn(0); // Left column
-    
-    // Add vertical dividing line
-    pdf.setDrawColor(200, 200, 200);
-    pdf.setLineDash([2, 2]);
-    pdf.line(pageWidth / 2, 10, pageWidth / 2, pageHeight - 10);
-    pdf.setLineDash([]);
-    
-    addColumn(columnWidth); // Right column
-    
-    const pdfBase64 = pdf.output('datauristring').split(',')[1];
-    
-    try {
-      const emailResult = await resend.emails.send({
-        from: "AABB Jequié <cadastro@aabbjequie.online>",
-        to: [validatedData.email],
-        subject: "Confirmação de Inscrição - AABB Jequié",
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h1 style="color: #1e40af;">Inscrição Recebida com Sucesso!</h1>
-            <p>Olá <strong>${validatedData.fullName}</strong>,</p>
-            <p>Recebemos sua inscrição na janela de adesão AABB Jequié com sucesso!</p>
-            <p><strong>Próximos passos:</strong></p>
-            <ul>
-              <li>Compareça à sede da AABB Jequié na data informada com os documentos originais em mãos.</li>
-            </ul>
-            <p style="margin-top: 10px;"><strong>OBS:</strong> O preenchimento deste formulário não garante a sua vaga. As vagas serão preenchidas de acordo ordem de chegada e o número de vagas é limitado, podendo encerrar a janela de adesão antes da data determinada.</p>
-            <p style="margin-top: 20px;">Atenciosamente,<br><strong>AABB Jequié</strong></p>
-          </div>
-        `,
-        attachments: [
-          {
-            filename: `ficha-inscricao-${validatedData.cpf.replace(/\D/g, '')}.pdf`,
-            content: pdfBase64,
-          },
-        ],
-      });
-      console.log('User email sent successfully:', emailResult);
-    } catch (emailError) {
-      console.error('Error sending user email:', emailError);
-      console.error('Email error details:', JSON.stringify(emailError, null, 2));
-      // Don't fail the whole request if user email fails
-    }
-
-    // Generate comprehensive PDF for admin
     const adminPdf = new jsPDF();
     let yPos = 20;
     
@@ -576,7 +392,40 @@ Deno.serve(async (req) => {
     
     const adminPdfBase64 = adminPdf.output('datauristring').split(',')[1];
     
-    // Send email to admin with both PDFs
+    // Send email to user with complete PDF
+    try {
+      const emailResult = await resend.emails.send({
+        from: "AABB Jequié <cadastro@aabbjequie.online>",
+        to: [validatedData.email],
+        subject: "Confirmação de Inscrição - AABB Jequié",
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h1 style="color: #1e40af;">Inscrição Recebida com Sucesso!</h1>
+            <p>Olá <strong>${validatedData.fullName}</strong>,</p>
+            <p>Recebemos sua inscrição na janela de adesão AABB Jequié com sucesso!</p>
+            <p><strong>Próximos passos:</strong></p>
+            <ul>
+              <li>Compareça à sede da AABB Jequié na data informada com os documentos originais em mãos.</li>
+            </ul>
+            <p style="margin-top: 10px;"><strong>OBS:</strong> O preenchimento deste formulário não garante a sua vaga. As vagas serão preenchidas de acordo ordem de chegada e o número de vagas é limitado, podendo encerrar a janela de adesão antes da data determinada.</p>
+            <p style="margin-top: 20px;">Atenciosamente,<br><strong>AABB Jequié</strong></p>
+          </div>
+        `,
+        attachments: [
+          {
+            filename: `inscricao-completa-${validatedData.cpf.replace(/\D/g, '')}.pdf`,
+            content: adminPdfBase64,
+          },
+        ],
+      });
+      console.log('User email sent successfully:', emailResult);
+    } catch (emailError) {
+      console.error('Error sending user email:', emailError);
+      console.error('Email error details:', JSON.stringify(emailError, null, 2));
+      // Don't fail the whole request if user email fails
+    }
+    
+    // Send email to admin with complete PDF
     try {
       await resend.emails.send({
         from: "AABB Jequié <cadastro@aabbjequie.online>",
@@ -592,25 +441,17 @@ Deno.serve(async (req) => {
               <p><strong>WhatsApp:</strong> ${validatedData.residentialWhatsapp}</p>
               <p><strong>Data:</strong> ${new Date().toLocaleString('pt-BR')}</p>
             </div>
-            <p>Dois arquivos estão anexados:</p>
-            <ul>
-              <li><strong>Recibo:</strong> Versão compacta para impressão</li>
-              <li><strong>Inscrição Completa:</strong> Todos os dados detalhados</li>
-            </ul>
+            <p>Arquivo anexado com todos os dados da inscrição.</p>
           </div>
         `,
         attachments: [
-          {
-            filename: `recibo-${validatedData.cpf.replace(/\D/g, '')}.pdf`,
-            content: pdfBase64,
-          },
           {
             filename: `inscricao-completa-${validatedData.cpf.replace(/\D/g, '')}.pdf`,
             content: adminPdfBase64,
           },
         ],
       });
-      console.log('Admin email sent successfully with both PDF attachments');
+      console.log('Admin email sent successfully');
     } catch (emailError) {
       console.error('Error sending admin email:', emailError);
     }
