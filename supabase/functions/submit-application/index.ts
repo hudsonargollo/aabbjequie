@@ -443,7 +443,7 @@ Deno.serve(async (req) => {
     
     // Send email to admin with complete PDF
     try {
-      await resend.emails.send({
+      const adminEmailResult = await resend.emails.send({
         from: "AABB Jequié <cadastro@aabbjequie.online>",
         to: ["hudsonargollo2@gmail.com", "w.aabbjequie@gmail.com"],
         subject: `Nova Inscrição - ${validatedData.fullName}`,
@@ -467,9 +467,10 @@ Deno.serve(async (req) => {
           },
         ],
       });
-      console.log('Admin email sent successfully');
+      console.log('Admin email sent successfully:', adminEmailResult);
     } catch (emailError) {
       console.error('Error sending admin email:', emailError);
+      console.error('Admin email error details:', JSON.stringify(emailError, null, 2));
     }
 
     // TODO: Send WhatsApp via Evolution API
