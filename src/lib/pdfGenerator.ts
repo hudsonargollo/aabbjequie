@@ -145,8 +145,15 @@ export const generateApplicationPDF = (application: ApplicationData) => {
     pdf.text('ASSINATURA DO TITULAR', xOffset + columnWidth / 2, yPos, { align: 'center' });
     yPos += 8;
     
-    // Date
+    // Attention Notice
     pdf.setFontSize(7);
+    pdf.setFont('helvetica', 'bold');
+    const attentionText = 'ATENÇÃO: Após a conclusão da Adesão o acesso ao clube será liberado a partir do dia 18/11/2025. Tempo hábil para conclusão do cadastro no sistema AABB Jequié.';
+    const splitAttention = pdf.splitTextToSize(attentionText, columnWidth - 10);
+    pdf.text(splitAttention, xOffset + 5, yPos);
+    yPos += splitAttention.length * 3 + 6;
+    
+    // Date
     pdf.setFont('helvetica', 'normal');
     pdf.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, xOffset + 5, yPos);
   };

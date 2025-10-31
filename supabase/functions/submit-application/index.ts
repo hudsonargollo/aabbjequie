@@ -385,6 +385,22 @@ Deno.serve(async (req) => {
     adminPdf.text(terms2, 27, yPos);
     yPos += (terms2.length * 6) + 10;
     
+    // Attention Notice
+    if (yPos > 240) {
+      adminPdf.addPage();
+      yPos = 20;
+    }
+    adminPdf.setFontSize(10);
+    adminPdf.setFont('helvetica', 'bold');
+    adminPdf.setTextColor(180, 83, 9); // Amber color
+    const attentionText = adminPdf.splitTextToSize(
+      'ATENÇÃO: Após a conclusão da Adesão o acesso ao clube será liberado a partir do dia 18/11/2025. Tempo hábil para conclusão do cadastro no sistema AABB Jequié.',
+      170
+    );
+    adminPdf.text(attentionText, 20, yPos);
+    yPos += (attentionText.length * 6) + 10;
+    adminPdf.setTextColor(0, 0, 0); // Reset to black
+    
     // Footer
     adminPdf.setFontSize(9);
     adminPdf.setFont('helvetica', 'italic');
