@@ -2,3 +2,6 @@ project_id = "jswfzxykscdarneujgvo"
 
 [functions.submit-application]
 verify_jwt = false
+
+[functions.test-application]
+verify_jwt = false
