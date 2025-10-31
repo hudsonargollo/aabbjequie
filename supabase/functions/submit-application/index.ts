@@ -486,11 +486,11 @@ Deno.serve(async (req) => {
       // Terms
       reciboPdf.setFontSize(10);
       reciboPdf.setFont('helvetica', 'bold');
-      reciboPdf.text('DECLARO E ACEITO', xOffset + 5, yPos);
+      reciboPdf.text('TERMOS E AUTORIZAÇÃO', xOffset + 5, yPos);
       yPos += 5;
       reciboPdf.setFont('helvetica', 'normal');
       reciboPdf.setFontSize(7);
-      const termsText1 = 'Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO INTERNO E OUTROS REGULAMENTOS DA AABB).';
+      const termsText1 = 'Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO E OUTROS REGULAMENTOS DA AABB).';
       const splitTerms1 = reciboPdf.splitTextToSize(termsText1, columnWidth - 10);
       reciboPdf.text(splitTerms1, xOffset + 5, yPos);
       yPos += splitTerms1.length * 3 + 3;
