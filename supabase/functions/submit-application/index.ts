@@ -551,7 +551,7 @@ Deno.serve(async (req) => {
     
     const reciboPdfBase64 = reciboPdf.output('datauristring').split(',')[1];
     
-    // Send email to user with both PDFs
+    // Send email to user with ficha completa only
     try {
       const emailResult = await resend.emails.send({
         from: "AABB Jequié <cadastro@aabbjequie.online>",
@@ -571,10 +571,6 @@ Deno.serve(async (req) => {
           </div>
         `,
         attachments: [
-          {
-            filename: `recibo-${validatedData.cpf.replace(/\D/g, '')}.pdf`,
-            content: reciboPdfBase64,
-          },
           {
             filename: `inscricao-completa-${validatedData.cpf.replace(/\D/g, '')}.pdf`,
             content: adminPdfBase64,
