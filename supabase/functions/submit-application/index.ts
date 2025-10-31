@@ -241,7 +241,7 @@ Deno.serve(async (req) => {
 
     console.log(`Application ${data.id} created successfully`);
 
-    // Generate comprehensive PDF for user and admin
+    // Generate comprehensive PDF for admin
     console.log('Generating comprehensive PDF...');
     
     const adminPdf = new jsPDF();
@@ -408,7 +408,150 @@ Deno.serve(async (req) => {
     
     const adminPdfBase64 = adminPdf.output('datauristring').split(',')[1];
     
-    // Send email to user with complete PDF
+    // Generate recibo PDF (compact two-column format)
+    console.log('Generating recibo PDF...');
+    const reciboPdf = new jsPDF();
+    const pageWidth = reciboPdf.internal.pageSize.width;
+    const pageHeight = reciboPdf.internal.pageSize.height;
+    const columnWidth = pageWidth / 2;
+    
+    // Function to add content to one column
+    const addColumn = (xOffset: number) => {
+      let yPos = 15;
+      
+      // Header
+      reciboPdf.setFontSize(14);
+      reciboPdf.setFont('helvetica', 'bold');
+      reciboPdf.text('FICHA DE INSCRIÇÃO', xOffset + columnWidth / 2, yPos, { align: 'center' });
+      yPos += 7;
+      reciboPdf.setFontSize(12);
+      reciboPdf.text('AABB Jequié', xOffset + columnWidth / 2, yPos, { align: 'center' });
+      yPos += 10;
+      
+      // Personal Data
+      reciboPdf.setFontSize(10);
+      reciboPdf.setFont('helvetica', 'bold');
+      reciboPdf.text('DADOS PESSOAIS', xOffset + 5, yPos);
+      yPos += 5;
+      reciboPdf.setFont('helvetica', 'normal');
+      reciboPdf.setFontSize(8);
+      reciboPdf.text(`Nome: ${validatedData.fullName}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
+      reciboPdf.text(`CPF: ${validatedData.cpf}`, xOffset + 5, yPos); yPos += 4;
+      reciboPdf.text(`RG: ${validatedData.rg}`, xOffset + 5, yPos); yPos += 4;
+      reciboPdf.text(`Nasc: ${validatedData.birthDate}`, xOffset + 5, yPos); yPos += 4;
+      reciboPdf.text(`Sexo: ${validatedData.sex === 'M' ? 'M' : 'F'}`, xOffset + 5, yPos); yPos += 4;
+      reciboPdf.text(`Est. Civil: ${validatedData.civilStatus}`, xOffset + 5, yPos); yPos += 6;
+      
+      // Residential Address
+      reciboPdf.setFontSize(10);
+      reciboPdf.setFont('helvetica', 'bold');
+      reciboPdf.text('ENDEREÇO RESIDENCIAL', xOffset + 5, yPos);
+      yPos += 5;
+      reciboPdf.setFont('helvetica', 'normal');
+      reciboPdf.setFontSize(8);
+      reciboPdf.text(`${validatedData.residentialStreet}, ${validatedData.residentialNumber}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
+      reciboPdf.text(`${validatedData.residentialNeighborhood} - ${validatedData.residentialCity}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
+      reciboPdf.text(`CEP: ${validatedData.residentialCep}`, xOffset + 5, yPos); yPos += 4;
+      reciboPdf.text(`WhatsApp: ${validatedData.residentialWhatsapp}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 6;
+      
+      // Commercial Address
+      reciboPdf.setFontSize(10);
+      reciboPdf.setFont('helvetica', 'bold');
+      reciboPdf.text('ENDEREÇO COMERCIAL', xOffset + 5, yPos);
+      yPos += 5;
+      reciboPdf.setFont('helvetica', 'normal');
+      reciboPdf.setFontSize(8);
+      reciboPdf.text(`${validatedData.commercialStreet}, ${validatedData.commercialNumber}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
+      reciboPdf.text(`${validatedData.commercialNeighborhood} - ${validatedData.commercialCity}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
+      reciboPdf.text(`CEP: ${validatedData.commercialCep}`, xOffset + 5, yPos); yPos += 6;
+      
+      // Dependents
+      if (validatedData.dependents && validatedData.dependents.length > 0) {
+        reciboPdf.setFontSize(10);
+        reciboPdf.setFont('helvetica', 'bold');
+        reciboPdf.text('DEPENDENTES', xOffset + 5, yPos);
+        yPos += 5;
+        reciboPdf.setFont('helvetica', 'normal');
+        reciboPdf.setFontSize(7);
+        
+        validatedData.dependents.forEach((dep: any, index: number) => {
+          reciboPdf.text(`${index + 1}. ${dep.name}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 });
+          yPos += 3;
+          reciboPdf.text(`CPF: ${dep.cpf || 'N/A'}`, xOffset + 5, yPos);
+          yPos += 4;
+        });
+        yPos += 3;
+      }
+      
+      // Terms
+      reciboPdf.setFontSize(10);
+      reciboPdf.setFont('helvetica', 'bold');
+      reciboPdf.text('DECLARO E ACEITO', xOffset + 5, yPos);
+      yPos += 5;
+      reciboPdf.setFont('helvetica', 'normal');
+      reciboPdf.setFontSize(7);
+      const termsText1 = 'Declaro para devidos fins que aceito e estou ciente das normas e regulamentos vigentes (ESTATUTO/ REGIMENTO INTERNO E OUTROS REGULAMENTOS DA AABB).';
+      const splitTerms1 = reciboPdf.splitTextToSize(termsText1, columnWidth - 10);
+      reciboPdf.text(splitTerms1, xOffset + 5, yPos);
+      yPos += splitTerms1.length * 3 + 3;
+      
+      const termsText2 = 'Autorizo o uso de minha imagem e de meus dependentes em fotos e filmagens com fins não comerciais nas publicações realizadas em eventos produzidos pela Associação.';
+      const splitTerms2 = reciboPdf.splitTextToSize(termsText2, columnWidth - 10);
+      reciboPdf.text(splitTerms2, xOffset + 5, yPos);
+      yPos += splitTerms2.length * 3 + 8;
+      
+      // First Signature
+      reciboPdf.setFontSize(8);
+      reciboPdf.line(xOffset + 10, yPos, xOffset + columnWidth - 10, yPos);
+      yPos += 4;
+      reciboPdf.setFont('helvetica', 'bold');
+      reciboPdf.text('ASSINATURA DO TITULAR', xOffset + columnWidth / 2, yPos, { align: 'center' });
+      yPos += 8;
+      
+      // Payment Info
+      reciboPdf.setFontSize(10);
+      reciboPdf.setFont('helvetica', 'bold');
+      reciboPdf.text('PAGAMENTO', xOffset + 5, yPos);
+      yPos += 5;
+      reciboPdf.setFont('helvetica', 'normal');
+      reciboPdf.setFontSize(8);
+      reciboPdf.text(`Taxa: ${validatedData.paymentMethod}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
+      reciboPdf.text(`Mensal: ${validatedData.monthlyPaymentMethod}`, xOffset + 5, yPos, { maxWidth: columnWidth - 10 }); yPos += 4;
+      reciboPdf.text(`Vencimento: ${validatedData.dueDate}`, xOffset + 5, yPos); yPos += 8;
+      
+      // Second Signature
+      reciboPdf.setFontSize(8);
+      reciboPdf.line(xOffset + 10, yPos, xOffset + columnWidth - 10, yPos);
+      yPos += 4;
+      reciboPdf.setFont('helvetica', 'bold');
+      reciboPdf.text('ASSINATURA DO TITULAR', xOffset + columnWidth / 2, yPos, { align: 'center' });
+      yPos += 8;
+      
+      // Attention Notice
+      reciboPdf.setFontSize(7);
+      reciboPdf.setFont('helvetica', 'bold');
+      const attentionText = 'ATENÇÃO: Após a conclusão da Adesão o acesso ao clube será liberado a partir do dia 18/11/2025. Tempo hábil para conclusão do cadastro no sistema AABB Jequié.';
+      const splitAttention = reciboPdf.splitTextToSize(attentionText, columnWidth - 10);
+      reciboPdf.text(splitAttention, xOffset + 5, yPos);
+      yPos += splitAttention.length * 3 + 6;
+      
+      // Date
+      reciboPdf.setFont('helvetica', 'normal');
+      reciboPdf.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, xOffset + 5, yPos);
+    };
+    
+    // Add both columns
+    addColumn(0); // Left column
+    
+    // Add vertical dividing line
+    reciboPdf.setDrawColor(200, 200, 200);
+    reciboPdf.line(pageWidth / 2, 10, pageWidth / 2, pageHeight - 10);
+    
+    addColumn(columnWidth); // Right column
+    
+    const reciboPdfBase64 = reciboPdf.output('datauristring').split(',')[1];
+    
+    // Send email to user with both PDFs
     try {
       const emailResult = await resend.emails.send({
         from: "AABB Jequié <cadastro@aabbjequie.online>",
@@ -429,6 +572,10 @@ Deno.serve(async (req) => {
         `,
         attachments: [
           {
+            filename: `recibo-${validatedData.cpf.replace(/\D/g, '')}.pdf`,
+            content: reciboPdfBase64,
+          },
+          {
             filename: `inscricao-completa-${validatedData.cpf.replace(/\D/g, '')}.pdf`,
             content: adminPdfBase64,
           },
@@ -441,7 +588,7 @@ Deno.serve(async (req) => {
       // Don't fail the whole request if user email fails
     }
     
-    // Send email to admin with complete PDF
+    // Send email to admin with both PDFs
     try {
       const adminEmailResult = await resend.emails.send({
         from: "AABB Jequié <cadastro@aabbjequie.online>",
@@ -457,10 +604,14 @@ Deno.serve(async (req) => {
               <p><strong>WhatsApp:</strong> ${validatedData.residentialWhatsapp}</p>
               <p><strong>Data:</strong> ${new Date().toLocaleString('pt-BR')}</p>
             </div>
-            <p>Arquivo anexado com todos os dados da inscrição.</p>
+            <p>Anexados: Recibo (compacto) e Ficha Completa (detalhada) com todos os dados da inscrição.</p>
           </div>
         `,
         attachments: [
+          {
+            filename: `recibo-${validatedData.cpf.replace(/\D/g, '')}.pdf`,
+            content: reciboPdfBase64,
+          },
           {
             filename: `inscricao-completa-${validatedData.cpf.replace(/\D/g, '')}.pdf`,
             content: adminPdfBase64,
