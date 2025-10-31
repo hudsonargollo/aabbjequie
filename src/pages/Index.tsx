@@ -182,10 +182,6 @@ const Index = () => {
                 </li>
                 <li className="flex gap-3">
                   <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">3</span>
-                  <span>Assine no campo indicado como "Assinatura do Titular"</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">4</span>
                   <span>Leve o documento assinado à sede da AABB Jequié para finalizar o processo</span>
                 </li>
               </ol>
