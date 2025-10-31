@@ -187,6 +187,12 @@ const Index = () => {
               </ol>
             </div>
 
+            <div className="w-full bg-amber-50 dark:bg-amber-950/30 border-2 border-amber-500/50 rounded-lg p-4">
+              <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">
+                <strong>⚠️ Atenção:</strong> Após a conclusão da Adesão o acesso ao clube será liberado a partir do dia 18/11/2025. Tempo hábil para conclusão do cadastro no sistema AABB Jequié.
+              </p>
+            </div>
+
             <div className="w-full bg-primary/5 border border-primary/20 rounded-lg p-4">
               <p className="text-sm text-muted-foreground">
                 <strong className="text-primary">Dúvidas?</strong> Entre em contato através do WhatsApp:{" "}
