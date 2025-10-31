@@ -405,7 +405,7 @@ Deno.serve(async (req) => {
             <p>Recebemos sua inscrição na janela de adesão AABB Jequié com sucesso!</p>
             <p><strong>Próximos passos:</strong></p>
             <ul>
-              <li>Compareça à sede da AABB Jequié na data informada com os documentos originais em mãos.</li>
+              <li>Compareça à sede da AABB Jequié na data informada com os documentos originais e respectivas cópias em mãos.</li>
             </ul>
             <p style="margin-top: 10px;"><strong>OBS:</strong> O preenchimento deste formulário não garante a sua vaga. As vagas serão preenchidas de acordo ordem de chegada e o número de vagas é limitado, podendo encerrar a janela de adesão antes da data determinada.</p>
             <p style="margin-top: 20px;">Atenciosamente,<br><strong>AABB Jequié</strong></p>
