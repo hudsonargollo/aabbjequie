@@ -111,23 +111,40 @@ const Index = () => {
         acceptImageUsage: true
       };
 
+      console.log('Submitting application data:', submissionData);
+
       const {
         data,
         error
       } = await supabase.functions.invoke('submit-application', {
         body: submissionData
       });
-      if (error) throw error;
+      
+      console.log('Response from edge function:', { data, error });
+      
+      if (error) {
+        console.error('Edge function error:', error);
+        throw error;
+      }
+
+      if (!data || !data.success) {
+        console.error('Invalid response from edge function:', data);
+        throw new Error(data?.error || 'Resposta inválida do servidor');
+      }
       
       toast.success("Inscrição enviada com sucesso! Você receberá uma confirmação por email e WhatsApp.");
       setShowTermsDialog(false);
       setSubmitted(true);
     } catch (error: any) {
       console.error('Submission error:', error);
-      if (error.errors) {
-        toast.error(error.errors[0].message);
+      console.error('Error details:', JSON.stringify(error, null, 2));
+      
+      if (error.details) {
+        toast.error(Array.isArray(error.details) ? error.details.join(', ') : error.details);
+      } else if (error.message) {
+        toast.error(error.message);
       } else {
-        toast.error(error.message || "Erro ao enviar inscrição. Tente novamente.");
+        toast.error("Erro ao enviar inscrição. Verifique os dados e tente novamente.");
       }
     } finally {
       setLoading(false);
